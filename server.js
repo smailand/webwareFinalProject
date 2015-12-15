@@ -1,6 +1,25 @@
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
+var pg = require('pg');
+
+var conString = "postgres://eqrtivpbzjhwwr:mQgfaM_AbwX1zRMnTvS2syW5As@ec2-54-204-5-56.compute-1.amazonaws.com:5432/dbdn3460h4l44i";
+
+var client = new pg.Client({
+  user: "eqrtivpbzjhwwr",
+  password: "mQgfaM_AbwX1zRMnTvS2syW5As",
+  database: "dbdn3460h4l44i",
+  port: 5432,
+  host: "ec2-54-204-5-56.compute-1.amazonaws.com",
+  ssl: true
+});
+
+client.connect(function(err) {
+  if(err) {
+    return console.error('could not connect to postgres', err);
+  }
+  console.log("Successfully Connected to database");
+});
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -11,6 +30,11 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/views/home.html'));
 });
+
+app.get('/eventsById', function(req, res) {
+  res.sendFile(path.join(__dirname, '/views/home.html'));
+});
+
 
 app.listen(port, function() {
   console.log('App is listening on port ' + port);
