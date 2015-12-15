@@ -133,7 +133,7 @@ function signUpForTime(userID, eventID, startTime, endTime, date) {
     shiftsForSlot = getShiftsForTimeslot(timeslot);
     timeslotNum = 0;
     for (i = 0; i < shiftsForSlot.length; i++) {
-      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus)) {
+      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus))){
         timeslotNum += 1;
       }
     }
