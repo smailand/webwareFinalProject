@@ -34,7 +34,7 @@ var HashMap = require('hashmap');
 var app = express();
 var port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '/app')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 
 app.use('/', function(req, res) {
