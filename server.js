@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var fs = require('fs');
 var pg = require('pg');
+var bodyParser = require("body-parser");
 
 var conString = "postgres://eqrtivpbzjhwwr:mQgfaM_AbwX1zRMnTvS2syW5As@ec2-54-204-5-56.compute-1.amazonaws.com:5432/dbdn3460h4l44i";
 
@@ -20,11 +21,6 @@ client.connect(function(err) {
   }
   console.log("Successfully Connected to database");
 
-  //
-  // var query = client.query('select * from recurrence_types where reccurence_type_id=1');
-  // query.on('row', function(row) {
-  //     console.log(row);
-  // });
 
 });
 var Enum = require('enum');
@@ -34,8 +30,50 @@ var HashMap = require('hashmap');
 var app = express();
 var port = process.env.PORT || 3000;
 
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+
 app.use(express.static(path.join(__dirname, '/public')));
 
+
+app.post('/createUser', function(req, res) {
+    var userName = req.body.userName;
+    var userEmail = req.body.userEmail;
+    var userType = req.body.userType;
+
+    console.log(userEmail);
+    var query = client.query(('insert into users (user_type_id, user_name, user_email) '+
+                              'values ('+userType+', \''+userName+'\', \''+userEmail+'\')'),
+                              function(err, result) {
+                                if(err){
+                                    res.send(err);
+                                }
+                                else{
+                                    console.log(result);
+                                    res.sendStatus(200);
+                                }
+                            }
+    );
+
+});
+
+app.post('/eventByUser', function(req, res) {
+    var ownerID = req.body.ownerID;
+    var query = client.query('SELECT * from events where event_owner_id='+ownerID, function(err, result) {
+      if(err){
+          res.send(err);
+      }
+      else{
+          res.sendStatus(200);
+          console.log(result.rows);
+      }
+    });
+});
+
+// insert into users (user_type_id, user_name, user_email) values ($1, $2, $2)
 
 app.use('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/app/index.html'));

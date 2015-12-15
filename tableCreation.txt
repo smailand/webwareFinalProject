@@ -55,7 +55,8 @@ ____________
 create table users(
     user_id bigserial primary key,
     user_type_id int,
-    user_email varchar(30)
+    user_name varchar(15) UNIQUE,
+    user_email varchar(30) UNIQUE
 );
 
 create table user_type(
@@ -67,3 +68,9 @@ create table user_type(
 1 --> participant
 
 ____________
+
+
+
+
+insert into events (event_name, event_owner_id, event_description, recurrence_type_id, recurrence_start_date, recurrence_end_date)
+    values("Test Event", 1, "This is a test event", 0, '2015-12-20','2015-12-20');
