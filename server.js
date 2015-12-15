@@ -38,11 +38,11 @@ app.use(express.static(path.join(__dirname, '/public')));
 
 
 app.use('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/app/index.html'));
+  res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
 app.get('/eventsById', function(req, res) {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+  res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
 
@@ -299,7 +299,7 @@ function groupShiftsIntoSignups(listOfShifts) {
     // get timeslot
     timeslot = ""; // TODO
     eventID = timeslot.eventID;
-    key = [eventID, timeslotID];
+    key = [eventID, timeslot.ef];
     if (eventShiftMap.has(key)) {
       shiftsForEvent = eventShiftMap.get(key);
       shiftsForEvent.push(listOfShifts[i]);
