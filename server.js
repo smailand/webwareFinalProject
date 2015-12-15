@@ -27,6 +27,9 @@ client.connect(function(err) {
   // });
 
 });
+var Enum = require('enum');
+
+var HashMap = require('hashmap');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -47,8 +50,14 @@ app.listen(port, function() {
   console.log('App is listening on port ' + port);
 });
 
+var recurrenceEnum = new Enum(['none', 'weekly', 'monthly']);
+var userTypeEnum = new Enum(['organizer', 'participant']);
+var approvalEnum = new Enum(['pending', 'approved', 'denied']);
+var dayOfWeekEnum = new Enum(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']);
+
 
 // if not recurring, recurrence start date will be original date, recurrenceEndDate should be -1
+// reccurence passed is enum
 function createEvent(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, capacity, startTime, endTime) {
   // save event
   newEvent = Event(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, -1)
@@ -56,20 +65,20 @@ function createEvent(eventName, eventDescription, eventOwnerID, recurrence, star
 
   datesList = [];
 
-  if (reccurrence === 'none') {
+  if (reccurrenceEnum.none.is(reccurrence)) {
     datesList.push(startDate);
-  } else if (reccurrence === 'weekly') {
+  } else if (reccurrenceEnum.weekly.is(reccurrence)) {
     // get original date
     dateAdded = startDate;
 
-    while (before(dateAdded, recurrenceEndDate)) {
+    while (dateBefore(dateAdded, recurrenceEndDate) < 1) {
       datesList.push(dateAdded);
       dateAdded = getDateForNextWeek(dateAdded);
     }
-  } else if (reccurrence === 'monthly') {
+  } else if (reccurrenceEnum.monthly.is(reccurrence)) {
     dateAdded = startDate;
 
-    while (before(dateAdded, recurrenceEndDate)) {
+    while (dateBefore(dateAdded, recurrenceEndDate) < 1) {
       datesList.push(dateAdded);
       dateAdded = getDateForNextMonth(dateAdded);
     }
@@ -102,6 +111,9 @@ function TimeSlot(capacity, eventID, startTime, endTime, date) {
   this.date = date;
 }
 
+// returns -1 for date1 before date2
+// returns 0 for date1 = date2
+// returns 1 for date1 after date2
 function dateBefore(date1, date2) {
   // TODO
 }
@@ -117,9 +129,18 @@ function getDateForNextWeek(date) {
 function signUpForTime(userID, eventID, startTime, endTime, date) {
   for (i = 0; i < endTime; i += (30 * 60 * 1000)) {
     // get time slot with eventID, startTime = i, endTime = i+30*60*1000, date = date
-    if (timeslot.capacity > getShiftsForTimeslot(timeslot).length) {
+    // TODO
+    shiftsForSlot = getShiftsForTimeslot(timeslot);
+    timeslotNum = 0;
+    for (i = 0; i < shiftsForSlot.length; i++) {
+      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus)) {
+        timeslotNum += 1;
+      }
+    }
+
+    if (timeslot.capacity > timeslotNum) {
       // allow signup
-      // TODO: Do we want to create the new shifts here, or make sure they can sign up for all of the requested shifts
+      // TODO: Do we want to create the new shifts here, or make sure they can sign up for all of the requested shifts - if make sure, move after loop
     } else {
       // error
       // TODO
@@ -136,22 +157,45 @@ function getShiftsForTimeslot(timeslotID) {
   // TODO
 }
 
+function getShiftsWithEventIDAndUserID(userID, eventID, startTimeRange, endTimeRange) {
+  // get all shifts for a user
+  shifts = [];
+  validShifts = [];
+  for (i = 0; i < shifts; i++) {
+    // get timeslot of shift
+    timeslot = ""; // TODO
+    if (timeslot.eventID === eventID) {
+      keepShift = true;
+      if (startTimeRange != -1) {
+        keepShift = keepShift && (dateBefore(startTimeRange, timeslot.date) < 1)
+      }
+      if (endTimeRange != -1) {
+        keepShift = keepShift && (dateBefore(timeslot.date, endTimeRange) < 1)
+      }
+      if (keepShift) {
+        validShifts.push(shifts[i]);
+      }
+    }
+  }
+  return keepShifts;
+}
+
 // creatorID - userID of organzier
-// getApproved - true if should get signups that have already been approved, false if not
-function getSignupsForCreator(creatorID, getApproved) {
+// allowedSignupStatuses - array of allowed signups
+function getSignupsForCreator(creatorID, allowedSignupStatuses) {
   // TODO get events with event.ownerID = creatorID
   creatorsEvents = []; // fix TODO
   returnShfits = []
   for (i = 0; i < creatorsEvents.length; i++) {
     // TODO get shifts for eventID
-    shiftsForEvent = [];  // TODO
+    shiftsForEvent = []; // TODO
     for (j = 0; j < shiftsForEvent.length; j++) {
-      if (shiftsForEvent[i].approved === getApproved) {
-        returnShfits.push(shiftsForEvent[i]);
+      // may not work depending on object equality
+      if (allowedSignupStatuses.indexOf(shiftsForEvent[i].approved) != -1) {
+        returnShifts.push(shiftsForEvent[i]);
       }
     }
   }
-
   return returnShfits;
 }
 
@@ -174,7 +218,7 @@ function getStartAndEndForShifts(shiftsList) {
 }
 
 // approve = true for approved, falsse for deny
-function changeSignupStatus(approve, startTime, endTime, eventID) {
+function changeSignupStatus(approve, startTime, endTime, eventID, userID) {
   // get all timeslots for event
   // get all shifts for given timeslots
   // edit approved field for all
@@ -185,7 +229,7 @@ function deleteUser(userID) {
   if (userType === 'organizer') {
     // get all events with organizer in as creatorID
     eventsByCreator = []
-    // get all timeslots for those events
+      // get all timeslots for those events
     for (i = 0; i < eventsByCreator.length(); i++) {
       // get timeslots for eventsByCreator[i]
       usersInShifts = []; // get all affected users
@@ -203,25 +247,15 @@ function deleteUser(userID) {
   } else {
     // get all shifts with userID
     // notify organizer...?
+    // remove all shifts with userID
   }
 }
 
 function getSignupsForUser(userID) {
-  // get all signups matching user id
-  shifts = [];
-  timeslots = [];
-  //events = [];
-  for (i = 0; i < shifts.length; i++) {
-    // get timeslot from shift
-    // TODO finsih this later
-    // must group timeslots based on eventID
-  }
-
-  // generate signups based on event grouping
-  signups = [];
+  // get shifts for user
+  shiftsList = []; // TODO
 
   return signups;
-
 }
 
 function Signup(serviceEvent, date, startTime, endTime) {
@@ -229,4 +263,70 @@ function Signup(serviceEvent, date, startTime, endTime) {
   this.date = date;
   this.startTime = startTime;
   this.endTime = endTime;
+}
+
+function Shift(status, timeslotID, userID) {
+  this.approveStatus = approveStatus;
+  this.timeslotID = timeslotID;
+  this.userID = userID;
+}
+
+function getDayOfWeekFromDate(date) {
+  // TODO
+}
+
+// ranges are inclusive
+function getEventsInDateRange(startDate, endDate) {
+  // TODO
+}
+
+
+function clientSideDateToDbDate(dateToConvert) {
+  // convert date
+  return dateToConvert;
+}
+
+function dbDateToClientSideDate(dateToConvert) {
+  // convert date
+  return dateToConvert;
+}
+
+function groupShiftsIntoSignups(listOfShifts) {
+  eventShiftMap = new HashMap();
+
+  for (i = 0; i < listOfShifts.length; i++) {
+    timeslotID = listOfShifts[i].timeslotID;
+    // get timeslot
+    timeslot = ""; // TODO
+    eventID = timeslot.eventID;
+    key = [eventID, timeslotID];
+    if (eventShiftMap.has(key)) {
+      shiftsForEvent = eventShiftMap.get(key);
+      shiftsForEvent.push(listOfShifts[i]);
+      eventShiftMap.set(key, shiftsForEvent[i]);
+    } else {
+      eventShiftMap.set(key, [listOfShifts[i]]);
+    }
+  }
+
+  signups = [];
+  eventShiftMap.forEach(function(value, key) {
+    times = getStartAndEndForShifts(value);
+
+    // get event from key[0] <- eventID
+    serviceEvent = ""; // TODO
+
+    // get date from key[1] <- timestampID
+    date = ""; // TODO
+
+    newSignup = Signup(serviceEvent, date, times[0], times[1]);
+
+    signups.push(newSignup);
+  });
+
+  return signups;
+}
+
+function createUser(useremail, userType) {
+  // add to db
 }
