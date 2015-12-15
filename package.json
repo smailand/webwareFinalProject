@@ -12,6 +12,7 @@
     "bootstrap": "^3.3.6",
     "express": "~4.9.0",
     "hashmap": "^2.0.4",
+    "pg": "^4.4.3",
     "underscore": "^1.8.3"
   }
 }

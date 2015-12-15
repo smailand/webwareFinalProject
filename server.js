@@ -19,16 +19,23 @@ client.connect(function(err) {
     return console.error('could not connect to postgres', err);
   }
   console.log("Successfully Connected to database");
+
+  //
+  // var query = client.query('select * from recurrence_types where reccurence_type_id=1');
+  // query.on('row', function(row) {
+  //     console.log(row);
+  // });
+
 });
 
 var app = express();
 var port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/app')));
 
 
 app.use('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+  res.sendFile(path.join(__dirname, '/app/index.html'));
 });
 
 app.get('/eventsById', function(req, res) {
