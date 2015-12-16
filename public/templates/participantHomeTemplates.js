@@ -1,5 +1,3 @@
-console.log('temps loadd')
-
 var myEventsTableTemplate = _.template(
   '<thead>' +
   '<tr>' +

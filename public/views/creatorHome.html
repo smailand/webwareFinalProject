@@ -9,11 +9,17 @@
 
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
+  <script src="http://underscorejs.org/underscore-min.js"></script>
+  <script src='js/project.js'></script>
+  
+  <script src='templates/creatorHomeTemplate.js'></script>
+  <script src='js/creatorHome.js'></script>
   <script src="js/creator.js"></script>
+
   <link rel="stylesheet" href="css/main.css">
   <!-- Author: Amanda Adkins -->
   <!-- Website: https://aaadkins-cs4241-assignment5.herokuapp.com -->
@@ -38,6 +44,7 @@
         <ul class="nav navbar-nav">
           <li class='active'><a href="/creatorHome">Home <span class="sr-only">(current)</span></a></li>
           <li><a href="/creatorEvents">My Events</a></li>
+          <li><a href="/createNewEvent">Create Event</a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
@@ -47,6 +54,30 @@
       </div>
     </div>
   </nav>
+  <div class='container'>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Your Upcoming Events</div>
+      <div class="panel-body" id="upcomingEventsPanel">
+      </div>
+
+      <!-- Table -->
+      <table class="table" id="upcomingEventsTable">
+      </table>
+    </div>
+  </div>
+  <div class='container'>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Pending Signups</div>
+      <div class="panel-body" id="pendingSignupsPanel">
+      </div>
+
+      <!-- Table -->
+      <table class="table" id="pendingSignupsTable">
+      </table>
+    </div>
+  </div>
 </body>
 
 </html>

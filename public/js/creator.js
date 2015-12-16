@@ -10,4 +10,5 @@ function initializePage() {
     window.location = "/";
   }
   console.log(sessionStorage.getItem('creatorID'));
+  fetchDataForPage();
 }

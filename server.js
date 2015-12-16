@@ -93,6 +93,20 @@ app.post('/cancelSignUp', function(req, res) {
   res.send("COOL BEANS");
 });
 
+app.post('/approveSignUp', function(req, res) {
+  var shiftID = req.body.shiftId;
+  // TODO approve given shift
+
+  res.send("ftuygoip");
+});
+
+app.post('/denySignUp', function(req, res) {
+  var shiftID = req.body.shiftId;
+  // TODO approve given shift
+
+  res.send("ftuygoip");
+});
+
 app.get('/getAllOwnedEvents', function(req, res) {
     var ownerID = req.body.ownerID;
     var query = client.query('SELECT * from events where event_owner_id='+ownerID, function(err, result) {
@@ -104,6 +118,18 @@ app.get('/getAllOwnedEvents', function(req, res) {
           console.log(result.rows);
       }
     });
+});
+
+app.get('/getEventsByDate', function(req, res) {
+  var userID = req.body.participantID;
+  var startDate = req.body.startDate;
+  var endDate = req.body.endDate;
+
+  console.log(userID);
+  console.log(startDate);
+  console.log(endDate);
+
+  res.send("Dates");
 });
 
 app.get('/getMySignUps', function(req, res) {
@@ -122,6 +148,11 @@ app.get('/eventsById', function(req, res) {
 app.get('/participantEventDetails', function(req, res) {
   console.log('getting eventDetails for ' + req.query.eventID);
   res.sendFile(path.join(__dirname, '/public/views/participantEventDetails.html'));
+});
+
+app.get('/creatorEventDetails', function(req, res) {
+  console.log('getting eventDetails for ' + req.query.eventID);
+  res.sendFile(path.join(__dirname, '/public/views/creatorEventDetails.html'));
 });
 
 app.get('/participantHome', function(req, res) {
