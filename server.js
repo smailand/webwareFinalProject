@@ -100,10 +100,6 @@ app.get('/getAllOwnedEvents', function(req, res) {
 
 // insert into users (user_type_id, user_name, user_email) values ($1, $2, $2)
 
-app.use('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/app/index.html'));
-});
-
 app.get('/eventsById', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
