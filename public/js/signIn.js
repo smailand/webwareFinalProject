@@ -74,18 +74,6 @@ function confirmCreate() {
       signInError.hidden = true;
 
       login(emailAddr);
-      // var userDetails = {
-      //   userEmail: emailAddr
-      // }
-      // handleXMLHTTPPost('/login', userDetails, function(responseText) {
-      //   console.log(responseText);
-      //   if (responseText.name === 'error') {
-      //     console.log("ERROR");
-      //   } else {
-      //     sessionStorage.setItem('userID', responseText.userId);
-      //     window.location = '/eventDetails'
-      //   }
-      // });
     }
   });
 

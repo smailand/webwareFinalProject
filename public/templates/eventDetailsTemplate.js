@@ -1,3 +1,5 @@
+console.log('detais temp loaded');
+
 var approvedSignupTemplate = _.template(
   '<tr class="success" id=signupTable<%= userID %>>' +
   '<td><%= userName %></td>' +
@@ -31,11 +33,67 @@ var signupsTableTemplate = _.template(
   '</table>'
 );
 
-var compiled = _.template(
-  "<div class='post'>" +
-  "<h2><%= name %></h2>" +
-  "<p><%= body %></p>" +
-  "<p><%= dislikes %></p>" +
-  "<div class='comments'><%= (function() { return comments.join('<br /><br />') })() %> </div>" +
-  "</div>"
+
+var eventDetailsTemplate = _.template(
+
+  '<form class="form-horizontal">' +
+  '<div class="form-group">' +
+    '<label for="eventNameBox" class="col-sm-2 control-label">Event Name</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="eventNameBox" value="<%= eventName %>">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+  '<div class="form-group">' +
+    '<label for="eventDescriptionBox" class="col-sm-2 control-label">Description</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="eventDescriptionBox" value="<%= eventDescription %>">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+  '<div class="form-group">' +
+    '<label for="eventStartBox" class="col-sm-2 control-label">Start Time</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="eventStartBox" value="<%= eventStart %>">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+  '<div class="form-group">' +
+    '<label for="eventEndBox" class="col-sm-2 control-label">End Time</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="eventEndBox" value="<%= eventEnd %>">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+  '<div class="form-group">' +
+    '<label for="eventCapacityBox" class="col-sm-2 control-label">Capacity</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="eventCapacityBox" value="<%= eventCapacity %> volunteers">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+  '<div class="form-group">' +
+    '<label for="organizerNameBox" class="col-sm-2 control-label">Organizer</label>' +
+    '<div class="col-sm-10">' +
+    '<input type="text" class="form-control"  readonly id="organizerNameBox" value="<%= organizerName %>">' +
+    '</input>' +
+    '</div>' +
+  '</div>' +
+'</form>'
+  // '<p>Event Name</p>' +
+  // '<input type="text" class="form-control"  readonly id="eventNameBox" value="<%= eventName %>">' +
+  // '</input>' +
+  // '<p>Event Description</p>' +
+  // '<input type="text" class="form-control"  readonly id="eventDescriptionBox" value="<%= eventDescription %>">' +
+  // '</input>' +
+  // '<p>Event Start</p>' +
+  // '<input type="text" class="form-control"  readonly id="eventStartBox" value="<%= eventStart %>">' +
+  // '</input>' +
+  // '<p>Event End</p>' +
+  // '<input type="text" class="form-control"  readonly id="eventEndBox" value="<%= eventEnd %>">' +
+  // '</input>' +
+  // '<p>Capacity</p>' +
+  // '<input type="text" class="form-control"  readonly id="eventStartBox" value="<%= eventCapacity %> volunteers">' +
+  // '</input>'
+
 );

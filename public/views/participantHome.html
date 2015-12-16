@@ -11,8 +11,12 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
   <!-- Latest compiled and minified JavaScript -->
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  <script src="js/signin.js"></script>
+
+  <script src="http://underscorejs.org/underscore-min.js"></script>
+  <script src="templates/participantHomeTemplates.js"></script>
+  <script src="js/participantHome.js"></script>
 
   <!-- define this script last -->
   <script src="js/participant.js"></script>
@@ -32,13 +36,13 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="">Community Service Portal</a>
+        <a class="navbar-brand" href="/participantHome">Community Service Portal</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li class='active'><a href="#">Home <span class="sr-only">(current)</span></a></li>
+          <li class='active'><a href="/participantHome">Home <span class="sr-only">(current)</span></a></li>
           <li><a href="#">Search</a></li>
           <li><a href="/participantEvents">All Events</a></li>
         </ul>
@@ -50,6 +54,18 @@
       </div>
     </div>
   </nav>
+  <div class='container'>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Your Events</div>
+      <div class="panel-body" id="eventsPanelBody">
+      </div>
+
+      <!-- Table -->
+      <table class="table" id="eventsTable">
+      </table>
+    </div>
+  </div>
 </body>
 
 </html>

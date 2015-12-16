@@ -85,6 +85,14 @@ app.post('/login', function(req, res) {
 
 });
 
+app.post('/cancelSignUp', function(req, res) {
+  var deleteShiftID = req.body.deleteShiftId;
+  var userID = req.body.userDeleteID;
+  console.log('delete shift with ID' + deleteShiftID + ' for ' + userID);
+  // TODO sam - delete shift with ID
+  res.send("COOL BEANS");
+});
+
 app.get('/getAllOwnedEvents', function(req, res) {
     var ownerID = req.body.ownerID;
     var query = client.query('SELECT * from events where event_owner_id='+ownerID, function(err, result) {
@@ -98,14 +106,22 @@ app.get('/getAllOwnedEvents', function(req, res) {
     });
 });
 
+app.get('/getMySignUps', function(req, res) {
+  userId = req.query.userID;
+  // TODO Sam - get me events based on id
+
+  res.send("ALL good");
+});
+
 // insert into users (user_type_id, user_name, user_email) values ($1, $2, $2)
 
 app.get('/eventsById', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
-app.get('/eventDetails', function(req, res) {
-  res.sendFile(path.join(__dirname, '/public/views/participant_eventDetails.html'));
+app.get('/participantEventDetails', function(req, res) {
+  console.log('getting eventDetails for ' + req.query.eventID);
+  res.sendFile(path.join(__dirname, '/public/views/participantEventDetails.html'));
 });
 
 app.get('/participantHome', function(req, res) {
@@ -123,6 +139,13 @@ app.get('/creatorEvents', function(req, res) {
 app.get('/participantEvents', function(req, res) {
   console.log('participantEvents');
   res.sendFile(path.join(__dirname, '/public/views/participantEvents.html'));
+});
+
+app.get('/getEventDetails', function(req, res) {
+  eventID = req.query.eventID;
+  console.log(eventID);
+  // TODO get event
+  res.send("HELLOOOOOOO");
 });
 
 
