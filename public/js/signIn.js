@@ -49,28 +49,50 @@ function confirmCreate() {
 
   if (participantType === 'organizer') {
     participantType = 0;
-    console.log("org");
   } else {
     participantType = 1;
-    console.log("particip");
   }
 
   // run XMLHTTPRequest
 
-  userEmailTaken = true;
+  var userDetails = {
+    userName: emailAddr,
+    userEmail: userName,
+    userType: participantType
+  };
 
-  if (userEmailTaken) {
-    // parse Email
-    emailAddress = "<user email>"; // TODO
-    signInError = document.getElementById("signInError");
+  userDetails = JSON.stringify(userDetails);
 
-    signInError.innerHTML = "Email address " + emailAddress + " is already taken. Try another.";
-    signInError.hidden = false;
-  } else {
-    // set session storage
-    sessionStorage.setItem("userID", 12345678);
-    // redirect to user home
-  }
+  handleXMLHTTPPost('/createUser', userDetails, function(resBody) {
+    if (resBody.detail) {
+      // parse Email
+      emailAddress = "<user email>"; // TODO
+      signInError = document.getElementById("signInError");
+
+      signInError.innerHTML = "Email address is already taken. Try another.";
+      signInError.hidden = false;
+    } else {
+      var userEmailVar = {
+        userEmail: emailAddr
+      };
+
+
+        userEmailVar = JSON.stringify(userEmailVar);
+      // send login request
+      handleXMLHTTPPost('/login', userEmailVar, function(resBody) {
+        if (resBody.userId) {
+          // set session storage
+          sessionStorage.setItem("userID", resBody.userId);
+          window.location = '/eventDetails';
+        } else {
+          console.log(resBody)
+        }
+      });
+
+
+
+    }
+  });
 
 }
 
@@ -81,4 +103,18 @@ function signInClicked() {
   signInError = document.getElementById("signInError");
   signInError.hidden = false;
   console.log("Signin failed");
+}
+
+function handleXMLHTTPPost(postTo, postText, callbackFunc) {
+  console.log("posting " + postText)
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange = function() {
+    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+      callbackFunc(xmlHttp.responseText);
+    }
+  };
+  xmlHttp.open("POST", postTo, true); // true for asynchronous
+
+  xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlHttp.send(postText);
 }
