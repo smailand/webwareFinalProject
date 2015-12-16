@@ -43,7 +43,6 @@ var DENIED = 2;
 
 app.use(express.static(path.join(__dirname, '/public')));
 
-
 app.post('/createUser', function(req, res) {
     var userName = req.body.userName;
     var userEmail = req.body.userEmail;
@@ -106,7 +105,16 @@ app.use('/', function(req, res) {
 });
 
 app.get('/eventsById', function(req, res) {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+  res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
+});
+
+app.get('/eventDetails', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/participant_eventDetails.html'));
+});
+
+
+app.use('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
 
@@ -363,7 +371,7 @@ function groupShiftsIntoSignups(listOfShifts) {
     // get timeslot
     timeslot = ""; // TODO
     eventID = timeslot.eventID;
-    key = [eventID, timeslotID];
+    key = [eventID, timeslot.ef];
     if (eventShiftMap.has(key)) {
       shiftsForEvent = eventShiftMap.get(key);
       shiftsForEvent.push(listOfShifts[i]);

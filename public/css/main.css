@@ -1,0 +1,15 @@
+.emailEnter {
+  width: 25em;
+  height: 20em;
+  margin-top: 10em;
+}
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  width: auto;
+}
+
+.smallMargin {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
