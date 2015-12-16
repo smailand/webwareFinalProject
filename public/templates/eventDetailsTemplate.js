@@ -122,11 +122,10 @@ var userShiftsTemplate = _.template(
 
 var pendingSignupsTemplate = _.template(
   '<tr id="signup<%= signupId %>" >' +
-  '<td><%= eventName %></td>' +
-  '<td><%= eventStart %></td>' +
-  '<td><%= eventEnd %></td>' +
   '<td><%= participantName %></td>' +
   '<td><%= participantEmail %></td>' +
+  '<td><%= eventStart %></td>' +
+  '<td><%= eventEnd %></td>' +
   '<td><div class="btn-group"><button class="btn btn-danger btn-xs" type="button" onclick=denySignup(event)>Deny</button>' +
   '<button class="btn btn-success btn-xs" type="button" onclick=approveSignup(event)>Approve</button></div></td>' +
   '</tr>'
@@ -139,8 +138,7 @@ var approvedSignupsTemplate = _.template(
   '<td><%= eventStart %></td>' +
   '<td><%= eventEnd %></td>' +
   '<td><%= approvalStatus %></td>' +
-  '<td><div class="btn-group"><button class="btn btn-danger btn-xs" type="button" onclick=denySignup(event)>Deny</button>' +
-  '<button class="btn btn-success btn-xs" type="button" onclick=approveSignup(event)>Approve</button></div></td>' +
+  '<td></td>' +
   '</tr>'
 );
 
@@ -151,8 +149,7 @@ var creatorShiftsTableTemplate = _.template(
   '<th>Email</th>' +
   '<th>Shift Start</th>' +
   '<th>Shift End</th>' +
-  '<th>Approval Status</th>' +
-  '<th>Modify Shift Signup</th>' +
+  '<th>Approval</th>' +
   '</tr>' +
   '</thead>' +
   '<tbody id="creatorShiftsTable">' +

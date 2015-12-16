@@ -1,5 +1,12 @@
 var userType = "";
 shiftsList = [];
+creatorShiftsList = [];
+eventID = "";
+
+signup1 = new CreatorViewSignup('a', 'b_D_7', 'c', 'd', 'e', 'f', 'g', 'Approved');
+creatorShiftsList.push(signup1);
+creatorShiftsList.push(new CreatorViewSignup('q', 'r', 's', 't', 'u', 'l', 'g', 'Pending'));
+console.log("shifts");
 
 function fetchDataForPage() {
   console.log('fetching data');
@@ -36,7 +43,10 @@ function fetchDataForPage() {
 
   if (userType === 'creator') {
     // get list of signups for event
-    showCreatorSignupsTable([]);
+    //function CreatorViewSignup(eventID, shiftID, eventName, eventStart, eventEnd, participantName, participantEmail, approvalStatus)
+    creatorShiftsList;
+
+    showCreatorSignupsTable(creatorShiftsList);
   } else {
     // check to see if user is signed up for this event
     // SAM TODO -- need new get... UserID and eventID, returns shift info
@@ -53,7 +63,7 @@ function showButtonsForUser(typeOfUser) {
   optionButtons = document.getElementById('optionButtons');
   if (typeOfUser === 'creator') {
     optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Edit Event</button>';
-    optionButtons.innerHTML += '<button type="button" class="btn btn-danger">Delete Event</button>'
+    optionButtons.innerHTML += '<button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>'
     detailsPanel = document.getElementById("details");
     detailsPanel.hidden = false;
   } else {
@@ -185,7 +195,7 @@ function getEventFromSignupID(signupID) {
 }
 
 
-function Signup(eventID, shiftID, eventName, eventStart, eventEnd, participantName, participantEmail, approvalStatus) {
+function CreatorViewSignup(eventID, shiftID, eventName, eventStart, eventEnd, participantName, participantEmail, approvalStatus) {
   this.signupId = "event:" + eventID + ";shift:" + shiftID;
   this.eventName = eventName;
   this.eventStart = eventStart;
@@ -200,7 +210,7 @@ function showCreatorSignupsTable(listOfSignups) {
   // replace signups list here TODO
   if (listOfSignups.length !== 0) {
     pendingTable = document.getElementById('eventsTable');
-    pendingTable.innerHTML = pendingSignupsTableTemplate();
+    pendingTable.innerHTML = creatorShiftsTableTemplate();
     tableBody = document.getElementById('creatorShiftsTable');
     tableDataHTML = "";
     listOfSignups.forEach(function(p, i) {
@@ -216,8 +226,75 @@ function showCreatorSignupsTable(listOfSignups) {
     tableBody.innerHTML = tableDataHTML;
   } else {
     pendingPanelBody = document.getElementById('signupsPanel');
-    pendingPanelBody.innerHTML = 'No signups for this event' + pendingPanelBody .innerHTML
+    pendingPanelBody.innerHTML = 'No signups for this event' + pendingPanelBody.innerHTML
     pendingPanelBody = document.getElementById('eventsTable');
     pendingPanelBody.innerHTML = "";
+  }
+}
+
+function approveSignup(e) {
+  rowID = e.target.parentElement.parentElement.parentElement.id;
+  console.log(rowID);
+  signupID = rowID.slice(6);
+  changeSignupStatus(signupID, 'approve');
+}
+
+function denySignup(e) {
+  rowID = e.target.parentElement.parentElement.parentElement.id;
+  console.log(rowID);
+  signupID = rowID.slice(6);
+  changeSignupStatus(signupID, 'deny');
+}
+
+function changeSignupStatus(signupID, newStatus) {
+  signupFromList = getSignupFromListById(creatorShiftsList, signupID);
+  if (signupFromList !== null) {
+    if (showAlert(signupFromList, newStatus)) {
+      shiftIDs = parseRowId(rowID);
+      // remove shifts
+      shiftIDs.forEach(function(p, i) {
+        console.log(p);
+        var shiftID = {
+          shiftId: p
+        }
+        if (newStatus === 'approve') {
+          handleXMLHTTPPost('/approveSignUp', shiftID, function(responseText) {
+            console.log(responseText);
+          });
+        } else {
+          handleXMLHTTPPost('/denySignup', shiftID, function(responseText) {
+            console.log(responseText);
+          });
+        }
+      });
+      // also remove from signups list TODO
+      if (newStatus === 'approve') {
+        signupFromList.approvalStatus = "Approved";
+      } else {
+        removeSignupFromList(creatorShiftsList, signupID);
+      }
+      // maybe replace with another list
+      showCreatorSignupsTable(creatorShiftsList);
+    }
+  } else {
+    // display error message telling user to refresh page
+    // TODO
+  }
+}
+
+function showAlert(signup, statusChangeAction) {
+  return window.confirm('Are you sure you want to ' + statusChangeAction + ' sign up for ' + signup.participantName + ' at ' + signup.eventName + ' occuring from ' + signup.eventStart + ' to ' + signup.eventEnd + '?');
+}
+
+function deleteEvent() {
+  if (window.confirm('Are you sure you want to delete this event?')) {
+    var deleteEvt = {
+      userDeleteID: sessionStorage.getItem('creatorID'),
+      deleteEventId: eventID
+    };
+    handleXMLHTTPPost('/deleteEvent', deleteEvt, function(responseText) {
+      console.log(responseText);
+      window.location = "/creatorHome"
+    });
   }
 }

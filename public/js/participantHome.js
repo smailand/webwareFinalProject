@@ -29,11 +29,8 @@ function showSignupsListTable(listOfSignups) {
     tableBody = document.getElementById('myEventsTableBody');
     tableDataHTML = "";
     listOfSignups.forEach(function(p, i) {
-      console.log(tableDataHTML);
       tableDataHTML += mySignupsTemplate(p);
     });
-
-    console.log(tableDataHTML);
 
     tableBody.innerHTML = tableDataHTML;
   } else {

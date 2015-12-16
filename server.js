@@ -101,6 +101,15 @@ app.post('/approveSignUp', function(req, res) {
 });
 
 app.post('/denySignUp', function(req, res) {
+  var userID = req.body.userDeleteID;
+  var deleteEventID = req.body.deleteEventId;
+
+  // TODO delete given shift
+
+  res.send("ftuygoip");
+});
+
+app.post('/deleteEvent', function(req, res) {
   var shiftID = req.body.shiftId;
   // TODO approve given shift
 
