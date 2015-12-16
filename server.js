@@ -37,11 +37,17 @@ var port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '/public')));
 
 
-app.use('/', function(req, res) {
+
+app.get('/eventsById', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
-app.get('/eventsById', function(req, res) {
+app.get('/eventDetails', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/participant_eventDetails.html'));
+});
+
+
+app.use('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
 
