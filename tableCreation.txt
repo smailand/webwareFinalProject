@@ -63,7 +63,7 @@ ____________
 create table users(
     user_id bigserial primary key,
     user_type_id int,
-    user_name varchar(15) UNIQUE,
+    user_name varchar(15),
     user_email varchar(30) UNIQUE
 );
 
