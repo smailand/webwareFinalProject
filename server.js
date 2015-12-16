@@ -36,6 +36,11 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+
+var PENDING = 0;
+var APPROVED = 1;
+var DENIED = 2;
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 
@@ -60,7 +65,28 @@ app.post('/createUser', function(req, res) {
 
 });
 
-app.post('/eventByUser', function(req, res) {
+app.post('/login', function(req, res) {
+    var userEmail = req.body.userEmail;
+
+    console.log(userEmail);
+    var query = client.query(('select * from users where user_email=\''+userEmail+'\''),
+                              function(err, result) {
+                                if(err){
+                                    res.send(err);
+                                }
+                                else if(result.rows.length > 0){
+                                    console.log(result.rows);
+                                    res.status(200).send({userId: result.rows[0].user_id});
+                                }
+                                else{
+                                    res.send("ERROR: Email Not on File")
+                                }
+                            }
+    );
+
+});
+
+app.get('/getAllOwnedEvents', function(req, res) {
     var ownerID = req.body.ownerID;
     var query = client.query('SELECT * from events where event_owner_id='+ownerID, function(err, result) {
       if(err){

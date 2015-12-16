@@ -2,8 +2,8 @@ CREATE TABLE time_slot(
     time_slot_id bigserial primary key,
     capacity smallint,
     event_id bigint,
-    start_time timestamp,
-    end_time timestamp
+    start_time time with time zone,
+    end_time time with time zone
 );
 
 ____________
@@ -13,6 +13,14 @@ CREATE TABLE events(
     event_name varchar(100),
     event_owner_id bigint,
     event_description varchar(500),
+    recurrence_event_id smallint,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+);
+
+
+create table recurrence_event(
+    recurrence_event_id bigserial primary key,
     recurrence_type_id smallint,
     recurrence_start_date date,
     recurrence_end_date date
