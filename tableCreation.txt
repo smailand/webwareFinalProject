@@ -2,8 +2,8 @@ CREATE TABLE time_slot(
     time_slot_id bigserial primary key,
     capacity smallint,
     event_id bigint,
-    start_time timestamp,
-    end_time timestamp
+    start_time time with time zone,
+    end_time time with time zone
 );
 
 ____________
@@ -13,6 +13,14 @@ CREATE TABLE events(
     event_name varchar(100),
     event_owner_id bigint,
     event_description varchar(500),
+    recurrence_event_id smallint,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+);
+
+
+create table recurrence_event(
+    recurrence_event_id bigserial primary key,
     recurrence_type_id smallint,
     recurrence_start_date date,
     recurrence_end_date date
@@ -55,7 +63,8 @@ ____________
 create table users(
     user_id bigserial primary key,
     user_type_id int,
-    user_email varchar(30)
+    user_name varchar(15) UNIQUE,
+    user_email varchar(30) UNIQUE
 );
 
 create table user_type(
@@ -67,3 +76,9 @@ create table user_type(
 1 --> participant
 
 ____________
+
+
+
+
+insert into events (event_name, event_owner_id, event_description, recurrence_type_id, recurrence_start_date, recurrence_end_date)
+    values("Test Event", 1, "This is a test event", 0, '2015-12-20','2015-12-20');
