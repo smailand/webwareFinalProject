@@ -75,7 +75,7 @@ app.post('/login', function(req, res) {
                                 }
                                 else if(result.rows.length > 0){
                                     console.log(result.rows);
-                                    res.status(200).send({userId: result.rows[0].user_id});
+                                    res.status(200).send({userId: result.rows[0].user_id, userType: result.rows[0].user_type_id});
                                 }
                                 else{
                                     res.send("ERROR: Email Not on File")
@@ -106,6 +106,23 @@ app.get('/eventsById', function(req, res) {
 
 app.get('/eventDetails', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/participant_eventDetails.html'));
+});
+
+app.get('/participantHome', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/participantHome.html'));
+});
+
+app.get('/creatorHome', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/creatorHome.html'));
+});
+
+app.get('/creatorEvents', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/creatorEvents.html'));
+});
+
+app.get('/participantEvents', function(req, res) {
+  console.log('participantEvents');
+  res.sendFile(path.join(__dirname, '/public/views/participantEvents.html'));
 });
 
 
