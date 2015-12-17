@@ -214,7 +214,9 @@ app.post('/deleteEvent', function(req, res) {
     var userId = req.body.userId;
 
     var queryString = "DELETE from events where event_id=" + eventId + " and event_owner_id=" + userId + ";"+
-        "DELETE from time_slot where event_id=" + eventId + ";"
+        "DELETE from time_slot where event_id=" + eventId + ";"+
+        "DELETE from shift where event_id="+eventId+";";
+
         console.log(queryString);
     var query = client.query((queryString),
         function(err, result) {
