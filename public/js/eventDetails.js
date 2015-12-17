@@ -65,16 +65,15 @@ function fetchDataForPage() {
 function updateAndDisplaySignups() {
   handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText) {
     timeslots = responseText;
-    handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText2) {
+    handleXMLHTTPGet('/getMySignUpsByEventId', 'eventID=' + eventID + '&userID=' + sessionStorage.getItem('participantID'), function(responseText2) {
+      console.log(responseText2);
+      shiftsList = responseText2;
+      removeDeniedSignups(shiftsList);
+      removeSignupsFromList(shiftsList, timeslots);
+      showShiftsTable(shiftsList);
+      showSignupsPanel();
 
-        console.log(timeslots[0])
-        console.log(responseText);
-        shiftsList = [];
-        removeSignupsFromList
-        showShiftsTable(shiftsList);
-        showSignupsPanel();
-      )
-    };
+    });
   });
 }
 
@@ -92,6 +91,8 @@ function showButtonsForUser(typeOfUser) {
 }
 
 function showShiftsTable(shiftsList) {
+  console.log(shiftsList);
+  console.log("shwoing shifts table");
   if (shiftsList.length !== 0) {
     sidePanel = document.getElementById('signupsPanel');
     sidePanel.innerHTML = "";
@@ -153,32 +154,25 @@ function Signup(eventID, shiftID, eventName, eventStart, eventEnd, approvalStatu
 }
 
 function removeSignup(e) {
+  console.log('remvoe signup')
   removeBtn = e.target;
   parent = removeBtn.parentElement;
   rowID = e.target.parentElement.parentElement.id;
+
+  console.log(rowID)
   signupID = rowID.slice(6);
-  signupFromList = getSignupFromListById(shiftsList, signupID);
-  if (signupFromList !== null) {
-    if (showRemoveAlert(signupFromList)) {
-      shiftsToRemove = parseRowId(rowID);
-      // remove shifts
-      shiftIDs.forEach(function(p, i) {
-        var deleteID = {
-          userDeleteID: sessionStorage.getItem('participantID'),
-          deleteShiftId: p
-        }
-        handleXMLHTTPPost('/cancelSignUp', deleteID, function(responseText) {
-          console.log(responseText);
-        });
-        // also remove from signups list TODO
-        removeSignupFromList(shiftsList, signupID);
-        // maybe replace with another list
-        showShiftsTable(shiftsList);
-      })
+  console.log(signupID)
+  if (showRemoveAlert()) {
+    //shiftIDs.forEach(function(p, i) {
+    var deleteID = {
+      userID: sessionStorage.getItem('participantID'),
+      shiftID: signupID
     }
-  } else {
-    // display error message telling user to refresh page
-    // TODO
+    handleXMLHTTPPost('/cancelSignUp', deleteID, function(responseText) {
+      console.log(responseText);
+      updateAndDisplaySignups()
+    });
+    //})
   }
 }
 
@@ -193,8 +187,8 @@ function parseRowId(rowID) {
   return shiftIDs;
 }
 
-function showRemoveAlert(signup) {
-  return window.confirm('Are you sure you want to unsign up for ' + signup.eventName + ' occuring from ' + signup.eventStart + ' to ' + signup.eventEnd + '?');
+function showRemoveAlert() {
+  return window.confirm('Are you sure you want to remove this signup?');
 }
 
 function getSignupFromListById(checkList, signupId) {
@@ -346,7 +340,9 @@ function showSignupsPanel() {
 
 
 function signUpForSlot(e) {
-  timeslotID = e.target.parentElement.parentElement.id;
+
+  timeslotID = e.target.parentElement.parentElement.parentElement.id;
+  console.log(timeslotID)
   var slot = {
     timeSlotId: timeslotID,
     eventId: eventID,
@@ -355,6 +351,8 @@ function signUpForSlot(e) {
 
   handleXMLHTTPPost('/signUpForShift', slot, function(responseText) {
     console.log(responseText);
+    updateAndDisplaySignups()
+
   });
 
 }
@@ -372,11 +370,25 @@ function removeSignupsFromList(signuplist, timeslotlist) {
     removeIndex = -1;
     for (j = 0; j < timeslotlist.legnth; j++) {
       if (signuplist[i].time_slot_id === timeslotlist[j].time_slot_id) {
+
         removeSlot = true;
         removeIndex = j;
         break;
       }
     }
     timeslotlist.splice(j, 1);
+  }
+}
+
+function removeDeniedSignups(signuplist) {
+  deniedIndices = [];
+  for (i = 0; i < signuplist.length; i++) {
+    if (signuplist[i].approval_status === 'denied') {
+      deniedIndices.unshift(i);
+    }
+  }
+
+  for (j = 0; j < deniedIndices.length; j++) {
+    signuplist.splice(deniedIndices[j], 1);
   }
 }
