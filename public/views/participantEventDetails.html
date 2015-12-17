@@ -60,26 +60,49 @@
         <div class="panel panel-default">
           <!-- Default panel contents -->
           <div class="panel-heading" id="eventHeading"></div>
-          <div class="panel-body" id="eventPanel">
+          <div class="panel-body">
+            <div id="eventPanel"></div>
 
             <div id="optionButtons">
+              hello
             </div>
           </div>
         </div>
       </div>
       <div class="col-sm-6">
-        <div class="panel panel-default" id='details' hidden>
+        <div class="row">
+          <div class="panel panel-default" id='details'>
 
-          <div class="panel-heading">
-            <div class="panel-title">
-              Your Shifts
+            <div class="panel-heading">
+              <div class="panel-title" id="sidePanelTitle">
+                Sign Up For More Events
+              </div>
             </div>
-          </div>
-          <div class="panel-body">
-            <table class="table" id="eventsTable">
-            </table>
-          </div>
+            <div class="panel-body">
+              <div id="signupsPanel">
+              </div>
+              <table class="table" id="newSignupsTable">
+              </table>
+            </div>
 
+          </div>
+        </div>
+        <div class="row">
+          <div class="panel panel-default" id='existingDetails' hidden>
+
+            <div class="panel-heading">
+              <div class="panel-title" id="sidePanelTitle">
+                Your Shifts
+              </div>
+            </div>
+            <div class="panel-body">
+              <div id="newSignupsPanel">
+              </div>
+              <table class="table" id="oldSignupsTable">
+              </table>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>

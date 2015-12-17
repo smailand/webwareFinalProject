@@ -3,6 +3,10 @@ shiftsList = [];
 creatorShiftsList = [];
 eventID = "";
 
+serviceEvent = "";
+
+timeslots = [];
+
 signup1 = new CreatorViewSignup('a', 'b_D_7', 'c', 'd', 'e', 'f', 'g', 'Approved');
 creatorShiftsList.push(signup1);
 creatorShiftsList.push(new CreatorViewSignup('q', 'r', 's', 't', 'u', 'l', 'g', 'Pending'));
@@ -34,7 +38,10 @@ function fetchDataForPage() {
     console.log(responseText);
 
     // TODO parse event details
-    serviceEvent = new EventDetails(eventID, 'a', 'b', 'c', 'd', 'f', 'g', 'h', 'i', new Date());
+    date = new Date();
+    startTime = date.toISOString().substring(11, 19);
+    endTime = date.toISOString().substring(11, 19);
+    serviceEvent = new EventDetails(eventID, 'a', 'b', startTime, endTime, 'f', 'g', 'h', 'i', new Date());
 
     displayEvent(serviceEvent);
   });
@@ -56,6 +63,7 @@ function fetchDataForPage() {
     shiftsList.push(signup1);
     shiftsList.push(new Signup('q', 'r', 's', 't', 'u', 'pending', 'l', 'g'));
     showShiftsTable(shiftsList);
+    showSignupsPanel();
   }
 }
 
@@ -66,14 +74,20 @@ function showButtonsForUser(typeOfUser) {
     optionButtons.innerHTML += '<button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>'
     detailsPanel = document.getElementById("details");
     detailsPanel.hidden = false;
-  } else {
-    optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Sign Up</button>';
   }
+  // else {
+  //   optionButtons.innerHTML = '<button type="button" class="btn btn-primary" onclick="showSignupsPanel()">Sign Up</button>';
+  // }
 }
 
 function showShiftsTable(shiftsList) {
   if (shiftsList.length !== 0) {
-    eventsTable = document.getElementById('eventsTable');
+    sidePanel = document.getElementById('signupsPanel');
+    sidePanel.innerHTML = "";
+
+    sidePanelTitle = document.getElementById('sidePanelTitle');
+    sidePanelTitle.innerHTML = 'Your Shifts';
+    eventsTable = document.getElementById('oldSignupsTable');
     eventsTable.innerHTML = userShiftsTableTemplate();
     tableDataHTML = "";
 
@@ -84,10 +98,10 @@ function showShiftsTable(shiftsList) {
     });
 
     tableBody.innerHTML = tableDataHTML;
-    detailsPanel = document.getElementById("details");
+    detailsPanel = document.getElementById("existingDetails");
     detailsPanel.hidden = false;
   } else {
-    detailsPanel = document.getElementById("details");
+    detailsPanel = document.getElementById("existingDetails");
     detailsPanel.hidden = true;
   }
 }
@@ -299,4 +313,46 @@ function deleteEvent() {
       window.location = "/creatorHome"
     });
   }
+}
+
+function showSignupsPanel() {
+
+  eventsTable = document.getElementById('newSignupsTable');
+  eventsTable.innerHTML = timeslotTableTemplate();
+
+  slotsTableBody = document.getElementById('timeslotsTable');
+  tableDataHTML = "";
+  timeslots.push(new Timeslot(eventID, 19, "00:30:00", "01:00:00"));
+  timeslots.forEach(function(p, i) {
+    tableDataHTML += timeslotTemplate(p);
+  });
+  slotsTableBody.innerHTML = tableDataHTML;
+
+  sidePanelTitle = document.getElementById('sidePanelTitle');
+  sidePanelTitle.innerHTML = 'Sign Up For Event';
+
+  optionButtons = document.getElementById('optionButtons');
+  optionButtons.innerHTML = '';
+}
+
+
+function signUpForSlot(e) {
+  timeslotID = e.target.parentElement.parentElement.id;
+  var slot = {
+    timeSlotId: timeslotID,
+    eventId: eventID,
+    userId: sessionStorage.getItem('participantID')
+  }
+
+  handleXMLHTTPPost('/signUpForShift', slot, function(responseText) {
+    console.log(responseText);
+  });
+
+}
+
+function Timeslot(eventID, timeslotID, slotStart, slotEnd) {
+  this.eventID = eventID;
+  this.timeslotID = timeslotID;
+  this.slotStart = slotStart;
+  this.slotEnd = slotEnd;
 }
