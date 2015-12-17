@@ -95,8 +95,14 @@ function updateAndDisplaySignups() {
   handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText) {
     timeslots = responseText;
     handleXMLHTTPGet('/getMySignUpsByEventId', 'eventID=' + eventID + '&userID=' + sessionStorage.getItem('participantID'), function(responseText2) {
+      console.log('mysignups')
       console.log(responseText2);
-      shiftsList = responseText2;
+      if (responseText2 === 'ERROR: Email Not on File') {
+        shiftsList = [];
+      } else {
+
+        shiftsList = responseText2;
+      }
       removeDeniedSignups(shiftsList);
       removeSignupsFromList(shiftsList, timeslots);
       showShiftsTable(shiftsList);
@@ -120,15 +126,12 @@ function showShiftsTable(shiftsList) {
     tableDataHTML = "";
 
     tableBody = document.getElementById('myShiftsTableBody');
-    if (shiftsList.length === 1) {
 
+    shiftsList.forEach(function(p, i) {
+      console.log(tableDataHTML);
       tableDataHTML += userShiftsTemplate(p);
-    } else {
-      shiftsList.forEach(function(p, i) {
-        console.log(tableDataHTML);
-        tableDataHTML += userShiftsTemplate(p);
-      });
-    }
+    });
+
 
     tableBody.innerHTML = tableDataHTML;
     detailsPanel = document.getElementById("existingDetails");

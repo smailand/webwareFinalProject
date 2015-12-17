@@ -1,5 +1,5 @@
 startDateRange = new Date();
-endDateRange = getDateDaysAwayFromDate(startDateRange, 7);
+endDateRange = new Date(2020, 11, 25);
 
 console.log(startDateRange);
 console.log(endDateRange);
