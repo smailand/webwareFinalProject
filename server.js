@@ -41,6 +41,10 @@ var PENDING = 0;
 var APPROVED = 1;
 var DENIED = 2;
 
+var RECUR_NONE = 0;
+var RECUR_WEEKLY = 1;
+var RECUR_MONTHLY = 2;
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.post('/createUser', function(req, res) {
@@ -98,6 +102,83 @@ app.post('/cancelSignUp', function(req, res) {
             }
         }
     );
+});
+
+app.post('/createEvent', function(req, res) {
+    var eventName = req.body.eventName;
+    var eventOwnerId = req.body.eventOwnerId;
+    var eventDescription = req.body.eventDescription;
+    var startTime = req.body.startTime;
+    var endTime = req.body.endTime;
+    var recurrenceStartDate = req.body.recurrenceStartDate;
+    var recurrenceEndDate = req.body.recurrenceEndDate;
+    var recurrenceTypeId = req.body.recurrenceTypeId;
+
+    var queryString = ""
+
+
+    if (recurrenceTypeId != RECUR_NONE) {
+        var queryRecurString = "insert into recurrence_event (recurrence_type_id, recurrence_start_date, recurrence_end_date)" +
+            " values (" + recurrenceTypeId + ", \'" + recurrenceStartDate + "\', \'" + recurrenceEndDate + "\'); " +
+            "SELECT currval(pg_get_serial_sequence('recurrence_event','recurrence_event_id'));";
+
+        var query = client.query(queryRecurString,
+            function(err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    recurrenceId = result.rows[0].currval;
+                    console.log(recurrenceId);
+
+                    queryString2 = "insert into events (event_name, event_owner_id, event_description, recurrence_event_id, start_time, end_time)" +
+                        'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' + recurrenceId + ', ' +
+                        '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+                        '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+                    var query2 = client.query(queryString2,
+                        function(err, result) {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.sendStatus(200);
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    } else {
+        queryString = "insert into events (event_name, event_owner_id, event_description, start_time, end_time)" +
+            'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' +
+            '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+            '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+        var query2 = client.query(queryString,
+            function(err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.sendStatus(200);
+                }
+            }
+        );
+    }
+
+    console.log(queryString);
+
+
+
+
+    //
+    // var query = client.query(queryString,
+    //     function(err, result) {
+    //         if (err) {
+    //             res.send(err);
+    //         } else {
+    //             res.sendStatus(200);
+    //         }
+    //     }
+    // );
 });
 
 app.post('/approveSignUp', function(req, res) {
@@ -328,8 +409,8 @@ var dayOfWeekEnum = new Enum(['sunday', 'monday', 'tuesday', 'wednesday', 'thurs
 // reccurence passed is enum
 function createEvent(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, capacity, startTime, endTime) {
     // save event
-    newEvent = Event(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, -1)
-        // put event in DB, getEventID
+    newEvent = Event(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, -1);
+    // put event in DB, getEventID
 
     datesList = [];
 
