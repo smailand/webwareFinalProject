@@ -324,7 +324,7 @@ app.get('/getMySignUps', function(req, res) {
   queryString = 'select ' +
     'shift.shift_id, ' +
     'shift.user_id as shift_user_id, ' +
-    'shift.approval_status_id, ' +
+    'approval_status.approval_status,' +
     'eventAndSlot.time_slot_id, ' +
     'eventAndSlot.capacity, ' +
     'eventAndSlot.event_id, ' +
@@ -350,6 +350,8 @@ app.get('/getMySignUps', function(req, res) {
     ') as eventAndSlot ' +
 
     'on (shift.time_slot_id = eventAndSlot.time_slot_id) ' +
+    'LEFT OUTER JOIN approval_status '+
+    'on(shift.approval_status_id = approval_status.approval_status_id)'
 
     'where user_id = ' + userID;
 
