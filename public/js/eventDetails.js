@@ -34,7 +34,7 @@ function fetchDataForPage() {
     console.log(responseText);
 
     // TODO parse event details
-    serviceEvent = new EventDetails(eventID, 'a', 'b', 'c', 'd', 'f', 'g', 'h', 'i');
+    serviceEvent = new EventDetails(eventID, 'a', 'b', 'c', 'd', 'f', 'g', 'h', 'i', new Date());
 
     displayEvent(serviceEvent);
   });
@@ -100,10 +100,11 @@ function displayEvent(serviceEvent) {
   eventHeading = document.getElementById('eventHeading');
   eventHeading.innerHTML = serviceEvent.eventName;
   eventPanel = document.getElementById('eventPanel');
+  console.log(serviceEvent.eventDate.toISOString().substring(0, 10));
   eventPanel.innerHTML = eventDetailsTemplate(serviceEvent) + eventPanel.innerHTML;
 }
 
-function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd, eventCapacity, recurrenceEventID, organizerName, organizerEmail) {
+function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd, eventCapacity, recurrenceEventID, organizerName, organizerEmail, eventDate) {
   this.eventID = eventID;
   this.eventName = eventName;
   this.eventDescription = eventDescription;
@@ -113,6 +114,7 @@ function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd
   this.recurrenceEventID = recurrenceEventID;
   this.organizerName = organizerName;
   this.organizerEmail = organizerEmail;
+  this.eventDate = eventDate;
 }
 
 // all should be strings

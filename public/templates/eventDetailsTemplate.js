@@ -35,46 +35,62 @@ var signupsTableTemplate = _.template(
 
 
 var eventDetailsTemplate = _.template(
-
-  '<form class="form-horizontal">' +
-  '<div class="form-group">' +
-  '<label for="eventNameBox" class="col-sm-2 control-label">Event Name</label>' +
-  '<div class="col-sm-10">' +
+  '<form>' +
+  '<div class="row">' +
+  '<div class="form-group col-md-12">' +
+  '<label for="eventNameBox" class="control-label">Event Name</label>' +
+  '<div>' +
   '<input type="text" class="form-control"  readonly id="eventNameBox" value="<%= eventName %>">' +
   '</input>' +
   '</div>' +
   '</div>' +
-  '<div class="form-group">' +
-  '<label for="eventDescriptionBox" class="col-sm-2 control-label">Description</label>' +
-  '<div class="col-sm-10">' +
-  '<input type="text" class="form-control"  readonly id="eventDescriptionBox" value="<%= eventDescription %>">' +
+  '</div>' +
+  '<div class="row">' +
+  '<div class="form-group col-md-12">' +
+  '<label for="eventDescriptionBox" control-label">Description</label>' +
+  '<div>' +
+  '<textarea type="text" rows="3" class="form-control"  readonly id="eventDescriptionBox">' +
+  '<%= eventDescription %>' +
+  '</textarea>' +
+  '</div>' +
+  '</div>' +
+  '</div>' +
+  '<div class="row">' +'<div class="form-group col-md-6">' +
+  '<label for="eventDateBox" class="control-label">Event Date</label>' +
+  '<div>' +
+  '<input type="date" class="form-control"  readonly id="eventDateBox" value=<%= eventDate.toISOString().substring(0, 10) %>>' +
   '</input>' +
   '</div>' +
   '</div>' +
-  '<div class="form-group">' +
-  '<label for="eventStartBox" class="col-sm-2 control-label">Start Time</label>' +
-  '<div class="col-sm-10">' +
-  '<input type="text" class="form-control"  readonly id="eventStartBox" value="<%= eventStart %>">' +
-  '</input>' +
-  '</div>' +
-  '</div>' +
-  '<div class="form-group">' +
-  '<label for="eventEndBox" class="col-sm-2 control-label">End Time</label>' +
-  '<div class="col-sm-10">' +
-  '<input type="text" class="form-control"  readonly id="eventEndBox" value="<%= eventEnd %>">' +
-  '</input>' +
-  '</div>' +
-  '</div>' +
-  '<div class="form-group">' +
-  '<label for="eventCapacityBox" class="col-sm-2 control-label">Capacity</label>' +
-  '<div class="col-sm-10">' +
+  '<div class="form-group col-md-6">' +
+  '<label for="eventCapacityBox" class="control-label">Capacity</label>' +
+  '<div>' +
   '<input type="text" class="form-control"  readonly id="eventCapacityBox" value="<%= eventCapacity %> volunteers">' +
   '</input>' +
   '</div>' +
   '</div>' +
-  '<div class="form-group">' +
-  '<label for="organizerNameBox" class="col-sm-2 control-label">Organizer</label>' +
-  '<div class="col-sm-10">' +
+  '</div>' +
+  '<div class="row">' +
+  '<div class="form-group col-md-6">' +
+  '<label for="eventStartBox" class="control-label">Start Time</label>' +
+  '<div>' +
+  '<input type="text" class="form-control"  readonly id="eventStartBox" value="<%= eventStart %>">' +
+  '</input>' +
+  '</div>' +
+  '</div>' +
+  '<div class="form-group col-md-6">' +
+  '<label for="eventEndBox" class="control-label">End Time</label>' +
+  '<div>' +
+  '<input type="text" class="form-control"  readonly id="eventEndBox" value="<%= eventEnd %>">' +
+  '</input>' +
+  '</div>' +
+  '</div>' +
+  '</div>' +
+  '</div>' +
+  '<div class="row">' +
+  '<div class="form-group col-md-12">' +
+  '<label for="organizerNameBox" class="control-label">Organizer</label>' +
+  '<div>' +
   '<input type="text" class="form-control"  readonly id="organizerNameBox" value="<%= organizerName %>">' +
   '</input>' +
   '</div>' +

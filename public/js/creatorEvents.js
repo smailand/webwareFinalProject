@@ -48,7 +48,7 @@ function getUsersEvents(userID) {
     console.log(responseText);
 
     eventsList = [];
-    eventsList.push(new Event('eventID', 'eventName', 'eventStart', 'eventEnd', 'organizerName', 'organizerEmail'));
+    eventsList.push(new Event('eventID', 'eventName', 'eventStart', 'eventEnd', 'organizerName', 'organizerEmail', new Date()));
 
     // TODO get events from here
     // replace signups list here TODO
@@ -56,11 +56,12 @@ function getUsersEvents(userID) {
   });
 }
 
-function Event(eventID, eventName, eventStart, eventEnd, organizerName, organizerEmail) {
+function Event(eventID, eventName, eventStart, eventEnd, organizerName, organizerEmail, eventDate) {
   this.eventID = "event:" + eventID;
   this.eventName = eventName;
   this.eventStart = eventStart;
   this.eventEnd = eventEnd;
   this.organizerName = organizerName;
   this.organizerEmail = organizerEmail;
+  this.eventDate = eventDate;
 }

@@ -15,7 +15,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   <script src="http://underscorejs.org/underscore-min.js"></script>
   <script src='js/project.js'></script>
-  
+
   <script src='templates/creatorHomeTemplate.js'></script>
   <script src='js/creatorHome.js'></script>
   <script src="js/creator.js"></script>
@@ -58,24 +58,28 @@
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">Your Upcoming Events</div>
-      <div class="panel-body" id="upcomingEventsPanel">
+      <div class="panel-body">
+        <div id="upcomingEventsPanel">
+        </div>
+        <!-- Table -->
+        <table class="table" id="upcomingEventsTable">
+        </table>
       </div>
 
-      <!-- Table -->
-      <table class="table" id="upcomingEventsTable">
-      </table>
     </div>
   </div>
   <div class='container'>
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">Pending Signups</div>
-      <div class="panel-body" id="pendingSignupsPanel">
+      <div class="panel-body">
+        <div id="pendingSignupsPanel">
+        </div>
+        <!-- Table -->
+        <table class="table" id="pendingSignupsTable">
+        </table>
       </div>
 
-      <!-- Table -->
-      <table class="table" id="pendingSignupsTable">
-      </table>
     </div>
   </div>
 </body>

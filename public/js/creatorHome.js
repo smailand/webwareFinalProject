@@ -14,8 +14,8 @@ function fetchDataForPage() {
     upcomingEvents = [];
     pendingSignups = [];
 
-    upcomingEvents.push(new EventDetails('abc', 'NewVEthjw', 'wehfwegfhoiugih3ewjripuaogfyhjuoi', 'asdf', 'jkl;', '8', 0, 'MANDI', 'mandi@com.email'));
-    pendingSignups.push(new PendingSignup('abc', '12', 'NewVEthjw', 'ahdsoji', 'qhire', 'MANDI', 'still mandi'));
+    upcomingEvents.push(new EventDetails('abc', 'NewVEthjw', 'wehfwegfhoiugih3ewjripuaogfyhjuoi', 'asdf', 'jkl;', '8', 0, 'MANDI', 'mandi@com.email', new Date()));
+    pendingSignups.push(new PendingSignup('abc', '12', 'NewVEthjw', 'ahdsoji', 'qhire', 'MANDI', 'still mandi', new Date()));
 
 
     showUpcomingEventsTable(upcomingEvents);
@@ -70,7 +70,7 @@ function showPendingSignupsTable(listOfPendingSignpus) {
   }
 }
 
-function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd, eventCapacity, recurrenceEventID, organizerName, organizerEmail) {
+function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd, eventCapacity, recurrenceEventID, organizerName, organizerEmail, eventDate) {
   this.eventID = eventID;
   this.eventName = eventName;
   this.eventDescription = eventDescription;
@@ -80,15 +80,17 @@ function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd
   this.recurrenceEventID = recurrenceEventID;
   this.organizerName = organizerName;
   this.organizerEmail = organizerEmail;
+  this.eventDate = eventDate;
 }
 
-function PendingSignup(eventID, shiftID, eventName, eventStart, eventEnd, participantName, participantEmail) {
+function PendingSignup(eventID, shiftID, eventName, signupStart, signupEnd, participantName, participantEmail, eventDate) {
   this.signupId = "event:" + eventID + ";shift:" + shiftID;
   this.eventName = eventName;
-  this.eventStart = eventStart;
-  this.eventEnd = eventEnd;
+  this.signupStart = signupStart;
+  this.signupEnd = signupEnd;
   this.participantName = participantName;
   this.participantEmail = participantEmail;
+  this.eventDate = eventDate;
 }
 
 function showEventDetailPage(e) {

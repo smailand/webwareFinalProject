@@ -1,8 +1,8 @@
 signupsList = [];
 
-signup1 = new Signup('a', 'b_D_7', 'c', 'd', 'e', 'approved', 'f', 'g');
+signup1 = new Signup('a', 'b_D_7', 'c', 'd', 'e', 'approved', 'f', 'g', new Date());
 signupsList.push(signup1);
-signupsList.push(new Signup('q', 'r', 's', 't', 'u', 'pending', 'l', 'g'));
+signupsList.push(new Signup('q', 'r', 's', 't', 'u', 'pending', 'l', 'g', new Date()));
 
 
 function fetchDataForPage() {
@@ -43,14 +43,15 @@ function showSignupsListTable(listOfSignups) {
 
 
 // all should be strings
-function Signup(eventID, shiftID, eventName, eventStart, eventEnd, approvalStatus, organizerName, organizerEmail) {
+function Signup(eventID, shiftID, eventName, shiftStart, shiftEnd, approvalStatus, organizerName, organizerEmail, eventDate) {
   this.signupId = "event:" + eventID + ";shift:" + shiftID;
   this.eventName = eventName;
-  this.eventStart = eventStart;
-  this.eventEnd = eventEnd;
+  this.shiftStart = shiftStart;
+  this.shiftEnd = shiftEnd;
   this.approvalStatus = approvalStatus;
   this.organizerName = organizerName;
   this.organizerEmail = organizerEmail;
+  this.eventDate = eventDate;
 }
 
 function removeSignup(e) {
@@ -81,6 +82,7 @@ function removeSignup(e) {
     // display error message telling user to refresh page
     // TODO
   }
+  e.stopPropagation();
 }
 
 function parseRowId(rowID) {

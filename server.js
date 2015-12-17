@@ -16,13 +16,12 @@ var client = new pg.Client({
 });
 
 client.connect(function(err) {
-  if(err) {
+  if (err) {
     return console.error('could not connect to postgres', err);
   }
   console.log("Successfully Connected to database");
-
-
 });
+
 var Enum = require('enum');
 
 var HashMap = require('hashmap');
@@ -31,8 +30,8 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 var bodyParser = require('body-parser')
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
 }));
 
@@ -44,61 +43,60 @@ var DENIED = 2;
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.post('/createUser', function(req, res) {
-    var userName = req.body.userName;
-    var userEmail = req.body.userEmail;
-    var userType = req.body.userType;
+  var userName = req.body.userName;
+  var userEmail = req.body.userEmail;
+  var userType = req.body.userType;
 
-    console.log(userEmail);
-    var query = client.query(('insert into users (user_type_id, user_name, user_email) '+
-                              'values ('+userType+', \''+userName+'\', \''+userEmail+'\')'),
-                              function(err, result) {
-                                if(err){
-                                    res.send(err);
-                                }
-                                else{
-                                    console.log(result.rows);
-                                    res.sendStatus(200);
-                                }
-                            }
-    );
+  console.log(userEmail);
+  var query = client.query(('insert into users (user_type_id, user_name, user_email) ' +
+      'values (' + userType + ', \'' + userName + '\', \'' + userEmail + '\')'),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        console.log(result.rows);
+        res.sendStatus(200);
+      }
+    }
+  );
 
 });
 
 app.post('/login', function(req, res) {
-    var userEmail = req.body.userEmail;
+  var userEmail = req.body.userEmail;
 
-    console.log(userEmail);
-    var query = client.query(('select * from users where user_email=\''+userEmail+'\''),
-                              function(err, result) {
-                                if(err){
-                                    res.send(err);
-                                }
-                                else if(result.rows.length > 0){
-                                    console.log(result.rows);
-                                    res.status(200).send({userId: result.rows[0].user_id, userType: result.rows[0].user_type_id});
-                                }
-                                else{
-                                    res.send("ERROR: Email Not on File")
-                                }
-                            }
-    );
+  console.log(userEmail);
+  var query = client.query(('select * from users where user_email=\'' + userEmail + '\''),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else if (result.rows.length > 0) {
+        console.log(result.rows);
+        res.status(200).send({
+          userId: result.rows[0].user_id,
+          userType: result.rows[0].user_type_id
+        });
+      } else {
+        res.send("ERROR: Email Not on File")
+      }
+    }
+  );
 
 });
 
 app.post('/cancelSignUp', function(req, res) {
-    var shiftID = req.body.shiftID;
-    var userID = req.body.userID
-    console.log(userEmail);
-    var query = client.query(('delete from shift where shift_id = '+shiftId+' and user+id='+userID),
-                              function(err, result) {
-                                if(err){
-                                    res.send(err);
-                                }
-                                else{
-                                    res.sendStatus(200);
-                                }
-                            }
-    );
+  var shiftID = req.body.shiftID;
+  var userID = req.body.userID
+  console.log(userEmail);
+  var query = client.query(('delete from shift where shift_id = ' + shiftId + ' and user+id=' + userID),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
 });
 
 app.post('/approveSignUp', function(req, res) {
@@ -125,16 +123,19 @@ app.post('/deleteEvent', function(req, res) {
 });
 
 app.get('/getAllOwnedEvents', function(req, res) {
-    var ownerID = req.body.ownerID;
-    var query = client.query('SELECT * from events where event_owner_id='+ownerID, function(err, result) {
-      if(err){
-          res.send(err);
-      }
-      else{
-          res.sendStatus(200);
-          console.log(result.rows);
-      }
-    });
+  var ownerID = req.body.ownerID;
+  var query = client.query('SELECT * from events where event_owner_id=' + ownerID, function(err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.sendStatus(200);
+      console.log(result.rows);
+    }
+  });
+});
+
+app.get('/createNewEvent', function(req, res) {
+  res.sendFile(path.join(__dirname, '/public/views/createEvent.html'));
 });
 
 app.get('/getEventsByDate', function(req, res) {
@@ -150,59 +151,57 @@ app.get('/getEventsByDate', function(req, res) {
 });
 
 app.get('/getMySignUps', function(req, res) {
-    var userID = req.query.userID;
-    console.log(userID);
+  var userID = req.query.userID;
+  console.log(userID);
 
 
-    query ='select '+
-        'shift.shift_id, '+
-        'shift.user_id as shift_user_id, '+
-        'shift.approval_status_id, '+
-        'eventAndSlot.time_slot_id, '+
-        'eventAndSlot.capacity, '+
-        'eventAndSlot.event_id, '+
-        'eventAndSlot.start_time, '+
-        'eventAndSlot.end_time, '+
-        'eventAndSlot.event_name, '+
-        'eventAndSlot.event_description, '+
-        'eventAndSlot.event_owner_id '+
-        'from shift '+
-        'LEFT OUTER join '+
-            '(select '+
-                'time_slot.time_slot_id, '+
-                'time_slot.capacity, '+
-                'time_slot.event_id, '+
-                'time_slot.start_time, '+
-                'time_slot.end_time, '+
-                'events.event_name, '+
-                'events.event_description, '+
-                'events.event_owner_id '+
-                'from time_slot '+
-                'LEFT OUTER JOIN events '+
-                'on (time_slot.event_id = events.event_id) '+
-            ') as eventAndSlot '+
+  query = 'select ' +
+    'shift.shift_id, ' +
+    'shift.user_id as shift_user_id, ' +
+    'shift.approval_status_id, ' +
+    'eventAndSlot.time_slot_id, ' +
+    'eventAndSlot.capacity, ' +
+    'eventAndSlot.event_id, ' +
+    'eventAndSlot.start_time, ' +
+    'eventAndSlot.end_time, ' +
+    'eventAndSlot.event_name, ' +
+    'eventAndSlot.event_description, ' +
+    'eventAndSlot.event_owner_id ' +
+    'from shift ' +
+    'LEFT OUTER join ' +
+    '(select ' +
+    'time_slot.time_slot_id, ' +
+    'time_slot.capacity, ' +
+    'time_slot.event_id, ' +
+    'time_slot.start_time, ' +
+    'time_slot.end_time, ' +
+    'events.event_name, ' +
+    'events.event_description, ' +
+    'events.event_owner_id ' +
+    'from time_slot ' +
+    'LEFT OUTER JOIN events ' +
+    'on (time_slot.event_id = events.event_id) ' +
+    ') as eventAndSlot ' +
 
-        'on (shift.time_slot_id = eventAndSlot.time_slot_id) '+
+    'on (shift.time_slot_id = eventAndSlot.time_slot_id) ' +
 
-        'where user_id = ' + userID;
+    'where user_id = ' + userID;
 
-        console.log(query);
+  console.log(query);
 
-    console.log(userID);
-    var query = client.query(query,
-                              function(err, result) {
-                                if(err){
-                                    res.send(err);
-                                }
-                                else if(result.rows.length > 0){
-                                    console.log(result.rows);
-                                    res.status(200).send(result.rows);
-                                }
-                                else{
-                                    res.send("ERROR: Email Not on File");
-                                }
-                            }
-    );
+  console.log(userID);
+  var query = client.query(query,
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else if (result.rows.length > 0) {
+        console.log(result.rows);
+        res.status(200).send(result.rows);
+      } else {
+        res.send("ERROR: Email Not on File");
+      }
+    }
+  );
 
 });
 
@@ -339,7 +338,7 @@ function signUpForTime(userID, eventID, startTime, endTime, date) {
     shiftsForSlot = getShiftsForTimeslot(timeslot);
     timeslotNum = 0;
     for (i = 0; i < shiftsForSlot.length; i++) {
-      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus))){
+      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus))) {
         timeslotNum += 1;
       }
     }

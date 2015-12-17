@@ -2,8 +2,9 @@ var creatorEventsTableTemplate = _.template(
   '<thead>' +
   '<tr>' +
   '<th>Event Name</th>' +
-  '<th>Event Start</th>' +
-  '<th>Event End</th>' +
+  '<th>Event Date</th>' +
+  '<th>Start Time</th>' +
+  '<th>End Time</th>' +
   '</tr>' +
   '</thead>' +
   '<tbody id="myEventsTableBody">' +
@@ -11,8 +12,9 @@ var creatorEventsTableTemplate = _.template(
 );
 
 var creatorEventsTemplate = _.template(
-  '<tr id="event<%= eventID %>" onclick="showEventDetailPage(event)">' + // TODO
+  '<tr id="event<%= eventID %>" onclick="showEventDetailPage(event)">' +
   '<td><%= eventName %></td>' +
+  '<td><%= eventDate.toISOString().substring(0, 10) %></td>' +
   '<td><%= eventStart %></td>' +
   '<td><%= eventEnd %></td>' +
   '</tr>'
@@ -22,6 +24,7 @@ var pendingSignupsTableTemplate = _.template(
   '<thead>' +
   '<tr>' +
   '<th>Event Name</th>' +
+  '<th>Event Date</th>' +
   '<th>Signup Start</th>' +
   '<th>Signup End</th>' +
   '<th>Participant Name</th>' +
@@ -36,8 +39,9 @@ var pendingSignupsTableTemplate = _.template(
 var pendingSignupsTemplate = _.template(
   '<tr id="signup<%= signupId %>" >' +
   '<td><%= eventName %></td>' +
-  '<td><%= eventStart %></td>' +
-  '<td><%= eventEnd %></td>' +
+  '<td><%= eventDate.toISOString().substring(0, 10) %></td>' +
+  '<td><%= signupStart %></td>' +
+  '<td><%= signupEnd %></td>' +
   '<td><%= participantName %></td>' +
   '<td><%= participantEmail %></td>' +
   '<td><div class="btn-group"><button class="btn btn-danger btn-xs" type="button" onclick=denySignup(event)>Deny</button>' +

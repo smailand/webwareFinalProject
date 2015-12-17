@@ -22,3 +22,7 @@
 #allEventsPager {
   margin: 0.5em;
 }
+
+.floatRight {
+  float: right;
+}

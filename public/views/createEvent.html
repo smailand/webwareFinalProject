@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>CS4241 HW 5</title>
+  <meta charset="utf-8">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="http://underscorejs.org/underscore-min.js"></script>
+  <script src='js/project.js'></script>
+
+  <script src="js/createEvent.js"></script>
+  <script src="js/creator.js"></script>
+  <link rel="stylesheet" href="css/main.css">
+  <!-- Author: Amanda Adkins -->
+  <!-- Website: https://aaadkins-cs4241-assignment5.herokuapp.com -->
+</head>
+
+<body id="content" onload="initializePage()">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/creatorHome">Community Service Portal</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="/creatorHome">Home <span class="sr-only">(current)</span></a></li>
+          <li><a href="/creatorEvents">My Events</a></li>
+          <li class='active'><a href="/createNewEvent">Create Event</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">My Account</a></li>
+          <li><a onclick="logout()">Logout</a></li>
+        </ul>
+      </div>
+  </nav>
+  <div class='container'>
+    <form name='newEvent'>
+      <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+          <h4>Create New Event</h4>
+        </div>
+        <div class="panel-body" id="eventsPanelBody">
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="eventNameBox" class="control-label">Event Name</label>
+                <div>
+                  <input type="text" name='eventName' class="form-control" id="eventNameBox" placeholder="Event Name" required>
+                  </input>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="eventDetailsBox" class="control-label">Event Details</label>
+                <div>
+                  <textarea type="text" rows=5 name='eventDetails' class="form-control" id="eventDetailsBox" placeholder="Event Details" required></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-sm-5">
+                  <label for="capacityBox" class="control-label">Event Capacity</label>
+                  <div>
+                    <input type="number" name='eventCapacity' min="1" class="form-control" id="capacityBox" placeholder="Number of Participants">
+                    </input>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-sm-6">
+              <div class="row">
+                <div class="form-group col-sm-5">
+                  <label for="recurrenceDropdown" class="control-label">Recurrence</label>
+                  <select id="recurrenceDropdown" name='recurrentDropdown' class="form-control">
+                    <option value=0>None</option>
+                    <option value=1>Weekly</option>
+                    <option value=2>Monthly</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <label for="eventStartBox" class="control-label">Event Date</label>
+                  <div>
+                    <input type="date" name='eventStartBox' class="form-control" id="eventStartBox" required>
+                    </input>
+                  </div>
+                </div>
+                <div class="form-group col-sm-6" id="recurrenceEndDiv" hidden>
+                  <label for="eventReccurrenceEndBox"  class="control-label">Recurrence End Date</label>
+                  <div>
+                    <input type="date" name='recurrenceEnd' class="form-control" id="eventReccurrenceEndBox">
+                    </input>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <label for="eventStartHour" class="control-label">Event Start Time</label>
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <select id="eventStartHour" name="eventStartHour" class="form-control">
+                        <option>12</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                      </select>
+                    </span>
+                    <span class="input-group-btn">
+                      <select id="eventStartMinute" name="eventStartMinute" class="form-control">
+                        <option>00</option>
+                        <option>30</option>
+                      </select>
+                    </span>
+                    <span class="input-group-btn">
+
+                      <select id="eventStartAMPM" name="eventStartAMPM" class="form-control">
+                        <option>AM</option>
+                        <option>PM</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
+                <div class="form-group col-sm-6">
+                  <label for="eventEndHour" class="control-label">Event End Time</label>
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <select id="eventEndHour" name="eventEndHour" class="form-control">
+                        <option>12</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>11</option>
+                      </select>
+                    </span>
+                    <span class="input-group-btn">
+                      <select id="eventEndMinute" name="eventEndMinute" class="form-control">
+                        <option>00</option>
+                        <option>30</option>
+                      </select>
+                    </span>
+                    <span class="input-group-btn">
+
+                      <select id="eventEndAMPM" name="eventEndAMPM" class="form-control">
+                        <option>AM</option>
+                        <option>PM</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class='row'>
+                <div id="signInError" class="alert alert-warning" role="alert" hidden></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="floatRight">
+            <button type="button" class="btn btn-default">Discard Event</button>
+            <button type="submit" class="btn btn-primary" onclick="submit(event)">Create Event</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>

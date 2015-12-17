@@ -60,12 +60,15 @@
     <div class="panel panel-default">
       <!-- Default panel contents -->
       <div class="panel-heading">Your Events</div>
-      <div class="panel-body" id="eventsPanelBody">
+      <div class="panel-body" >
+        <div id="eventsPanelBody">
+        </div>
+        <!-- Table -->
+        <table class="table" id="eventsTable">
+        </table>
       </div>
 
-      <!-- Table -->
-      <table class="table" id="eventsTable">
-      </table>
+
       <nav id="allEventsPager">
         <ul class="pager">
           <li class="previous" onclick="prevPage(event)"><a href=""><span aria-hidden="true">&larr;</span> Previous Week</a></li>

@@ -1,4 +1,15 @@
 function initialize() {
+  participantID = sessionStorage.getItem('participantID');
+  if (participantID !== null) {
+    window.location = "/participantHome";
+  }
+
+  creatorID = sessionStorage.getItem('creatorID');
+  if (creatorID !== null) {
+    window.location = '/creatorHome';
+  }
+  console.log(sessionStorage.getItem('creatorID'));
+
   createBtn = document.getElementById("createAcct");
   createBtn.addEventListener('click', createClickedOnce);
 
