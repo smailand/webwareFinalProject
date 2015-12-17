@@ -225,7 +225,25 @@ app.get('/getEventsByDate', function(req, res) {
     var startDate = req.query.startDate;
     var endDate = req.query.endDate;
 
-    queryString = "SELECT * from events where start_time < " + endDate + " and start_time > " + startDate;
+    console.log(req.query);
+
+
+
+    queryString = "SELECT "+
+    "events.event_id, " +
+    "events.event_name, " +
+    "events.event_owner_id, " +
+    "events.event_description, " +
+    "events.recurrence_event_id, " +
+    "events.start_time, " +
+    "events.end_time, " +
+    "users.user_name, " +
+    "users.user_email " +
+    "from events "+
+    "left outer join users "+
+    "on(events.event_owner_id=users.user_id) "+
+
+    "where start_time < \'" + endDate + "\' and start_time > \'" + startDate +"\'";
 
     console.log(queryString);
 
@@ -608,6 +626,7 @@ function date2AfterDate1(date1, date2) {
 }
 
 function addWeek(jsDate) {
+    var copy = new Date();
     copy.setTime(jsDate.getTime());
     copy.setDate(copy.getDate() + 7);
     return copy;

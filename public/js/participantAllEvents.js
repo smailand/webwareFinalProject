@@ -1,5 +1,9 @@
-startDateRange = "";
-endDateRange = "";
+startDateRange = new Date();
+endDateRange = getDateDaysAwayFromDate(startDateRange, 7);
+
+console.log(startDateRange);
+console.log(endDateRange);
+
 userID = "";
 
 function fetchDataForPage() {
@@ -56,11 +60,14 @@ function nextPage(e) {
 }
 
 function getEventsInDateRange() {
-  handleXMLHTTPGet('/getEventsByDate', 'startDate=' + startDateRange + '&endDate=' + endDateRange + '&participantID=' + userID, function(responseText) {
-    console.log(responseText);
-
+  handleXMLHTTPGet('/getEventsByDate', 'startDate=' + startDateRange.toISOString().substring(0, 10) + '&endDate=' + endDateRange.toISOString().substring(0, 10), function(response) {
+    console.log(response);
     eventsList = [];
-    eventsList.push(new Event('eventID', 'eventName', 'eventStart', 'eventEnd', 'organizerName', 'organizerEmail', new Date()));
+
+    for(i=0; i < response.length; i++){
+        event = response[i];
+        eventsList.push(new Event(event.event_id, event.event_name, event.start_time, event.end_time, event.user_name, event.user_email, new Date(event.start_time)));
+    }
 
     // TODO get events from here
     // replace signups list here TODO
@@ -71,8 +78,9 @@ function getEventsInDateRange() {
 // should return the date x days away
 // negative indicates days before
 function getDateDaysAwayFromDate(originalDate, numDaysDifferent) {
-  // TODO
-  return originalDate;
+    var copy = new Date();
+    copy.setDate(copy.getDate() + numDaysDifferent);
+    return copy;
 }
 
 function Event(eventID, eventName, eventStart, eventEnd, organizerName, organizerEmail, eventDate) {
