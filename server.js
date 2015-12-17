@@ -384,6 +384,47 @@ app.get('/getTimeSlotByEventId', function(req, res) {
     );
 });
 
+
+app.get('/getPendingShiftSignUps', function(req, res) {
+    var userId = req.query.userId;
+    var queryString = "select "+
+    "shift_id, "+
+    "shift.event_id, "+
+    "users.user_name, "+
+    "users.user_email, "+
+    "time_slot.start_time, "+
+    "time_slot.end_time, "+
+    "events.event_name, "+
+    "events.event_description "+
+    "from shift "+
+    "left outer join users "+
+    "on(shift.user_id=users.user_id) "+
+
+    "left outer join time_slot "+
+    "on(shift.time_slot_id=time_slot.time_slot_id) "+
+
+    "left outer join events "+
+    "on(shift.event_id=events.event_id) "+
+
+    "where events.event_owner_id= "+userId+
+    "and "+
+    "shift.approval_status_id="+PENDING;
+
+    console.log(queryString);
+    var query = client.query(queryString,
+        function(err, result) {
+            if (err) {
+                res.send(err);
+            } else if (result.rows.length > 0) {
+                console.log(result.rows);
+                res.status(200).send(result.rows);
+            } else {
+                res.send("ERROR: Event ID Does not Exist");
+            }
+        }
+    );
+});
+
 app.post('/createEvent', function(req, res) {
     var eventName = req.body.eventName;
     var eventOwnerId = req.body.eventOwnerId;
