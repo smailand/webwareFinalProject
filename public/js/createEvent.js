@@ -1,6 +1,23 @@
 function fetchDataForPage() {
   recurrence = document.getElementById("recurrenceDropdown");
-  recurrence.addEventListener("change", recurrenceChanged)
+  recurrence.addEventListener("change", recurrenceChanged);
+  console.log("HEREEEE")
+
+  eventStartBox = document.getElementById('eventStartBox');
+  dateToday = new Date();
+  dateToday.setDate(dateToday.getDate() + 1)
+  eventStartBox.value = dateToday.toISOString().substring(0, 10);
+
+  eventReccurrenceEndBox = document.getElementById('eventReccurrenceEndBox');
+  eventReccurrenceEndBox.value = dateToday.toISOString().substring(0, 10);
+
+  form = document.getElementById('newEventForm');
+  form.addEventListener('submit', function(event) {
+    console.log('submitting');
+    checkCreateEvent());
+    event.preventDefault();
+  });
+
 }
 
 function recurrenceChanged(e) {
@@ -21,95 +38,65 @@ function recurrenceChanged(e) {
   }
 }
 
-function submit(e) {
+function checkCreateEvent() {
+  console.log("checking stuff");
+  errorMsgPane = document.getElementById('createError');
+  errorMsgPane.innerHTML = "";
+  errorMsgPane.hidden = true;
+
   // check recurrence type
   recurrence = document.getElementById("recurrenceDropdown");
   recurrenceVal = parseInt(recurrence.options[recurrence.selectedIndex].value);
 
   // get date from start date
-  startDate = "";
+  eventStartBox = document.getElementById('eventStartBox');
+  startDate = new Date(eventStartBox.value);
 
-  if (!date2AfterDate1(new Date(), startDate) {
-    // invalid date
+  if (!date2AfterDate1(new Date(), startDate)) {
+    errorMsgPane.innerHTML = "Start date must occur after the current date."
+    errorMsgPane.hidden = false;
+    return false;
   }
 
   if (recurrenceVal > 0) {
+    eventReccurrenceEndBox = document.getElementById('eventReccurrenceEndBox');
+    endDate = new Date(eventReccurrenceEndBox.value);
+    if (!date2AfterDate1(startDate, endDate)) {
+      errorMsgPane.innerHTML = "Reccurrence end date must occur after the event start date."
+      errorMsgPane.hidden = false;
 
+      return false;
+    }
   }
 
+  startHourBox = document.getElementById("eventStartHour");
+  startHourText = startHourBox.options[startHourBox.selectedIndex].text;
+  startMinuteBox = document.getElementById("eventStartMinute");
+  startMinuteText = startMinuteBox.options[startMinuteBox.selectedIndex].text;
+  startAMPMBox = document.getElementById("eventStartAMPM");
+  startAMPMText = startAMPMBox.options[startAMPMBox.selectedIndex].text;
 
-//
-//   < input type = "text"
-//   name = 'eventName'
-//   class = "form-control"
-//   id = "eventNameBox"
-//   placeholder = "Event Name"
-//   required >
-//     < textarea type = "text"
-//   rows = 5 name = 'eventDetails'
-//   class = "form-control"
-//   id = "eventDetailsBox"
-//   placeholder = "Event Details"
-//   required > < /textarea> < input type = "number"
-//   name = 'eventCapacity'
-//   min = "1"
-//   class = "form-control"
-//   id = "capacityBox"
-//   placeholder = "Number of Participants" >
-//     < select id = "recurrenceDropdown"
-//   name = 'recurrentDropdown'
-//   class = "form-control" >
-//     < option value = 0 > None < /option> < option value = 1 > Weekly < /option> < option value = 2 > Monthly < /option> < input type = "date"
-//   name = 'eventStartBox'
-//   class = "form-control"
-//   id = "eventStartBox"
-//   required >
-//     < input type = "date"
-//   name = 'recurrenceEnd'
-//   class = "form-control"
-//   id = "eventReccurrenceEndBox" >
-//     < select id = "eventStartHour"
-//   name = "eventStartHour"
-//   class = "form-control" >
-//     < select id = "eventStartMinute"
-//   name = "eventStartMinute"
-//   class = "form-control" >
-//     < select id = "eventStartAMPM"
-//   name = "eventStartAMPM"
-//   class = "form-control" >
-//     < option > AM < /option> < option > PM < /option> < select id = "eventEndHour"
-//   name = "eventEndHour"
-//   class = "form-control" >
-//     < select id = "eventEndMinute"
-//   name = "eventEndMinute"
-//   class = "form-control" >
-//     < select id = "eventEndAMPM"
-//   name = "eventEndAMPM"
-//   class = "form-control" >
-//
-//
-//
-//     >
-//     < div id = "signInError"
-//   class = "alert alert-warning"
-//   role = "alert"
-//   hidden >
-//
-//
-//
-//
-//
-//
-//     < div class = "col-md-12" >
-//     < div class = "floatRight" >
-//     < button type = "button"
-//   class = "btn btn-default" > Discard Event < /button> < button type = "submit"
-//   class = "btn btn-primary"
-//   onclick = "submit(event)" > Create Event < /button>
-//
-//
-//
-//
+  endHourBox = document.getElementById("eventEndHour");
+  endHourText = endHourBox.options[endHourBox.selectedIndex].text;
+  endMinuteBox = document.getElementById("eventEndMinute");
+  endMinuteText = endMinuteBox.options[endMinuteBox.selectedIndex].text;
+  endAMPMBox = document.getElementById("eventEndAMPM");
+  endAMPMText = endAMPMBox.options[endAMPMBox.selectedIndex].text;
+
+
+  dateToday = new Date();
+  dateToday.setDate(dateToday.getDate() + 1)
+  startingTime = new Date(dateToday.toISOString().substring(0, 11) + makeTimeStringFromHourMinuteAMPM(startHourText, startMinuteText, startAMPMText));
+
+  endingTime = new Date(dateToday.toISOString().substring(0, 11) + makeTimeStringFromHourMinuteAMPM(endHourText, endMinuteText, endAMPMText));
+
+  if (!date2AfterDate1(startingTime, endingTime)) {
+    errorMsgPane.innerHTML = "Start time must occur before the end time."
+    errorMsgPane.hidden = false;
+    return false;
+  }
+
+  return true;
 }
 
 function date2AfterDate1(date1, date2) {
@@ -117,4 +104,19 @@ function date2AfterDate1(date1, date2) {
     return false;
   }
   return true;
+}
+
+function makeTimeStringFromHourMinuteAMPM(hourString, minuteString, AMPMString) {
+  if (AMPMString === 'PM') {
+    // modify hour strings
+    if (hourString !== '12') {
+      hour = parseInt(hourString)
+      hour += 12;
+      hourString = hour.toString();
+    }
+  } else if (hourString === '12') {
+    hourString = '00';
+  }
+
+  return hourString + ':' + minuteString + ':00'
 }

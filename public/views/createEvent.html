@@ -53,7 +53,7 @@
       </div>
   </nav>
   <div class='container'>
-    <form name='newEvent'>
+    <form name='newEvent' id="newEventForm">
       <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading">
@@ -185,7 +185,7 @@
                 </div>
               </div>
               <div class='row'>
-                <div id="signInError" class="alert alert-warning" role="alert" hidden></div>
+                <div id="createError" class="alert alert-warning" role="alert" hidden></div>
               </div>
             </div>
           </div>
@@ -195,7 +195,7 @@
         <div class="col-md-12">
           <div class="floatRight">
             <button type="button" class="btn btn-default">Discard Event</button>
-            <button type="submit" class="btn btn-primary" onclick="submit(event)">Create Event</button>
+            <button type="submit" class="btn btn-primary">Create Event</button>
           </div>
         </div>
       </div>
