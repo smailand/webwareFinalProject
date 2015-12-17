@@ -87,11 +87,11 @@ insert into events (event_name, event_owner_id, event_description, recurrence_ev
 insert into events (event_name, event_owner_id, event_description, recurrence_event_id, start_time, end_time)
     values ('TEST EVENT', 1, 'TEST DESCRIPTION', '2015-12-27 12:00:00 America/New_York''2015-12-27 16:00:00 America/New_York' );
 
-insert into time_slot (capacity, event_id, start_time, end_time) values (10, 9, '04:00:00 EST', '6:00:00 EST');
-insert into time_slot (capacity, event_id, start_time, end_time) values (10, 9, '06:00:00 EST', '8:00:00 EST');
-insert into time_slot (capacity, event_id, start_time, end_time) values (10, 9, '08:00:00 EST', '10:00:00 EST');
-insert into time_slot (capacity, event_id, start_time, end_time) values (10, 9, '10:00:00 EST', '12:00:00 EST');
-insert into time_slot (capacity, event_id, start_time, end_time) values (10, 9, '12:00:00 EST', '14:00:00 EST');
+insert into time_slot (capacity, event_id, start_time, end_time) values (10, 10, '04:00:00 EST', '6:00:00 EST');
+insert into time_slot (capacity, event_id, start_time, end_time) values (10, 10, '06:00:00 EST', '8:00:00 EST');
+insert into time_slot (capacity, event_id, start_time, end_time) values (10, 10, '08:00:00 EST', '10:00:00 EST');
+insert into time_slot (capacity, event_id, start_time, end_time) values (10, 10, '10:00:00 EST', '12:00:00 EST');
+insert into time_slot (capacity, event_id, start_time, end_time) values (10, 10, '12:00:00 EST', '14:00:00 EST');
 
 
 

@@ -209,15 +209,37 @@ app.post('/denySignUp', function(req, res) {
     );
 });
 
+
+app.post('/signUpForShift', function(req, res) {
+    var timeSlotId = req.body.timeSlotId;
+    var userId = req.body.userId;
+    var eventId = req.body.eventId;
+
+    var queryString = "INSERT into shift (user_id, time_slot_id, approval_status_id, event_id) " +
+        "values (" +userId+ ", " +timeSlotId+ ", "+PENDING+", " +eventId+ ")";
+
+        console.log(queryString);
+
+    var query = client.query((queryString),
+        function(err, result) {
+            if (err) {
+                res.send(err);
+            } else {
+                res.sendStatus(200);
+            }
+        }
+    );
+});
+
 app.post('/deleteEvent', function(req, res) {
     var eventId = req.body.eventId;
     var userId = req.body.userId;
 
-    var queryString = "DELETE from events where event_id=" + eventId + " and event_owner_id=" + userId + ";"+
-        "DELETE from time_slot where event_id=" + eventId + ";"+
-        "DELETE from shift where event_id="+eventId+";";
+    var queryString = "DELETE from events where event_id=" + eventId + " and event_owner_id=" + userId + ";" +
+        "DELETE from time_slot where event_id=" + eventId + ";" +
+        "DELETE from shift where event_id=" + eventId + ";";
 
-        console.log(queryString);
+    console.log(queryString);
     var query = client.query((queryString),
         function(err, result) {
             if (err) {
