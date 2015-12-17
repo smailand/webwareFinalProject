@@ -80,7 +80,7 @@ function updateAndDisplaySignups() {
 function showButtonsForUser(typeOfUser) {
   optionButtons = document.getElementById('optionButtons');
   if (typeOfUser === 'creator') {
-    optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Edit Event</button>';
+    //optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Edit Event</button>';
     optionButtons.innerHTML += '<button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>'
     detailsPanel = document.getElementById("details");
     detailsPanel.hidden = false;
