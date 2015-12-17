@@ -1,8 +1,5 @@
 signupsList = [];
 
-signup1 = new Signup('a', 'b_D_7', 'c', 'd', 'e', 'approved', 'f', 'g', new Date());
-signupsList.push(signup1);
-signupsList.push(new Signup('q', 'r', 's', 't', 'u', 'pending', 'l', 'g', new Date()));
 
 
 function fetchDataForPage() {
@@ -11,8 +8,16 @@ function fetchDataForPage() {
   // get user signups
   userID = sessionStorage.getItem('participantID');
 
-  handleXMLHTTPGet('/getMySignUps', 'userID=' + userID, function(responseText) {
-    console.log(responseText);
+  handleXMLHTTPGet('/getMySignUps', 'userID=' + userID, function(response) {
+    console.log(response);
+
+
+    for(i=0; i < response.length; i++){
+        shift = response[i];
+        signup1 = new Signup(shift.event_id, shift.shift_id, shift.event_name, shift.start_time, shift.end_time, shift.approval_status, shift.user_name, shift.user_email, new Date(shift.start_date));
+        signupsList.push(signup1)
+    }
+
 
     // TODO get events from here
     // replace signups list here TODO
@@ -66,8 +71,8 @@ function removeSignup(e) {
       // remove shifts
       shiftIDs.forEach(function(p, i) {
         var deleteID = {
-          userDeleteID: sessionStorage.getItem('participantID'),
-          deleteShiftId: p
+          userID: parseInt(sessionStorage.getItem('participantID')),
+          shiftID: parseInt(p)
         }
         handleXMLHTTPPost('/cancelSignUp', deleteID, function(responseText) {
           console.log(responseText);

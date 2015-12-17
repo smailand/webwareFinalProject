@@ -93,9 +93,14 @@ app.post('/login', function(req, res) {
 app.post('/cancelSignUp', function(req, res) {
 
   var shiftID = req.body.shiftID;
-  var userID = req.body.userID
-  console.log(userEmail);
-  var query = client.query(('delete from shift where shift_id = ' + shiftId + ' and user+id=' + userID),
+  var userID = req.body.userID;
+  console.log(req.body);
+
+  queryString = 'delete from shift where shift_id = ' + shiftID + ' and user_id=' + userID;
+
+  console.log(queryString);
+
+  var query = client.query((queryString),
     function(err, result) {
       if (err) {
         res.send(err);
@@ -332,7 +337,10 @@ app.get('/getMySignUps', function(req, res) {
     'eventAndSlot.end_time, ' +
     'eventAndSlot.event_name, ' +
     'eventAndSlot.event_description, ' +
-    'eventAndSlot.event_owner_id ' +
+    'eventAndSlot.event_owner_id, ' +
+    'eventAndSlot.start_date, ' +
+    'users.user_email, '+
+    'users.user_name ' +
     'from shift ' +
     'LEFT OUTER join ' +
     '(select ' +
@@ -343,17 +351,22 @@ app.get('/getMySignUps', function(req, res) {
     'time_slot.end_time, ' +
     'events.event_name, ' +
     'events.event_description, ' +
-    'events.event_owner_id ' +
+    'events.event_owner_id, ' +
+    'events.start_time as start_date ' +
     'from time_slot ' +
     'LEFT OUTER JOIN events ' +
     'on (time_slot.event_id = events.event_id) ' +
     ') as eventAndSlot ' +
 
     'on (shift.time_slot_id = eventAndSlot.time_slot_id) ' +
-    'LEFT OUTER JOIN approval_status '+
-    'on(shift.approval_status_id = approval_status.approval_status_id)'
 
-    'where user_id = ' + userID;
+    'LEFT OUTER JOIN approval_status '+
+    'on(shift.approval_status_id = approval_status.approval_status_id)'+
+
+    'LEFT OUTER JOIN users '+
+    'on(eventAndSlot.event_owner_id = users.user_id) ' +
+
+    'where shift.user_id = ' + userID;
 
   console.log(query);
 
