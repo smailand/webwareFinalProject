@@ -33,6 +33,7 @@ var bodyParser = require('body-parser')
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
+
 }));
 
 
@@ -40,9 +41,14 @@ var PENDING = 0;
 var APPROVED = 1;
 var DENIED = 2;
 
+var RECUR_NONE = 0;
+var RECUR_WEEKLY = 1;
+var RECUR_MONTHLY = 2;
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.post('/createUser', function(req, res) {
+
   var userName = req.body.userName;
   var userEmail = req.body.userEmail;
   var userType = req.body.userType;
@@ -85,6 +91,7 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/cancelSignUp', function(req, res) {
+
   var shiftID = req.body.shiftID;
   var userID = req.body.userID
   console.log(userEmail);
@@ -99,27 +106,173 @@ app.post('/cancelSignUp', function(req, res) {
   );
 });
 
-app.post('/approveSignUp', function(req, res) {
-  var shiftID = req.body.shiftId;
-  // TODO approve given shift
+app.post('/createEvent', function(req, res) {
+  var eventName = req.body.eventName;
+  var eventOwnerId = req.body.eventOwnerId;
+  var eventDescription = req.body.eventDescription;
+  var startTime = req.body.startTime;
+  var endTime = req.body.endTime;
+  var recurrenceStartDate = req.body.recurrenceStartDate;
+  var recurrenceEndDate = req.body.recurrenceEndDate;
+  var recurrenceTypeId = req.body.recurrenceTypeId;
 
-  res.send("ftuygoip");
+  var queryString = ""
+
+
+  if (recurrenceTypeId != RECUR_NONE) {
+    var queryRecurString = "insert into recurrence_event (recurrence_type_id, recurrence_start_date, recurrence_end_date)" +
+      " values (" + recurrenceTypeId + ", \'" + recurrenceStartDate + "\', \'" + recurrenceEndDate + "\'); " +
+      "SELECT currval(pg_get_serial_sequence('recurrence_event','recurrence_event_id'));";
+
+    var query = client.query(queryRecurString,
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          recurrenceId = result.rows[0].currval;
+          console.log(recurrenceId);
+
+          queryString2 = "insert into events (event_name, event_owner_id, event_description, recurrence_event_id, start_time, end_time)" +
+            'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' + recurrenceId + ', ' +
+            '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+            '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+          var query2 = client.query(queryString2,
+            function(err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.sendStatus(200);
+              }
+            }
+          );
+        }
+      }
+    );
+  } else {
+    queryString = "insert into events (event_name, event_owner_id, event_description, start_time, end_time)" +
+      'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' +
+      '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+      '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+    var query2 = client.query(queryString,
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.sendStatus(200);
+        }
+      }
+    );
+  }
+
+  console.log(queryString);
+
+
+
+
+  //
+  // var query = client.query(queryString,
+  //     function(err, result) {
+  //         if (err) {
+  //             res.send(err);
+  //         } else {
+  //             res.sendStatus(200);
+  //         }
+  //     }
+  // );
 });
 
+app.post('/approveSignUp', function(req, res) {
+  var shiftID = req.body.shiftId;
+  var query = client.query(("UPDATE shift set approval_status_id=" + APPROVED + " where shift_id=" + shiftID),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
+});
+
+
+
 app.post('/denySignUp', function(req, res) {
-  var userID = req.body.userDeleteID;
-  var deleteEventID = req.body.deleteEventId;
+  var shiftID = req.body.shiftId;
+  var query = client.query(("UPDATE shift set approval_status_id=" + DENIED + " where shift_id=" + shiftID),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
+});
 
-  // TODO delete given shift
 
-  res.send("ftuygoip");
+app.post('/signUpForShift', function(req, res) {
+  var timeSlotId = req.body.timeSlotId;
+  var userId = req.body.userId;
+  var eventId = req.body.eventId;
+
+  var queryString = "INSERT into shift (user_id, time_slot_id, approval_status_id, event_id) " +
+    "values (" + userId + ", " + timeSlotId + ", " + PENDING + ", " + eventId + ")";
+
+  console.log(queryString);
+
+  var query = client.query((queryString),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
 });
 
 app.post('/deleteEvent', function(req, res) {
-  var shiftID = req.body.shiftId;
-  // TODO approve given shift
+  var eventId = req.body.eventId;
+  var userId = req.body.userId;
 
-  res.send("ftuygoip");
+  var queryString = "DELETE from events where event_id=" + eventId + " and event_owner_id=" + userId + ";" +
+    "DELETE from time_slot where event_id=" + eventId + ";" +
+    "DELETE from shift where event_id=" + eventId + ";";
+
+  console.log(queryString);
+  var query = client.query((queryString),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
+});
+
+app.post('/editEvent', function(req, res) {
+  var newDescription = req.body.newDescription;
+  var newName = req.body.newName;
+  var eventId = req.body.eventId;
+
+  queryString = "UPDATE events set event_description=\'" + newDescription + "\'," +
+    "event_Name=\'" + newName + "\' " +
+    "WHERE event_id=" + eventId;
+
+  console.log(queryString);
+
+  var query = client.query((queryString),
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.sendStatus(200);
+      }
+    }
+  );
 });
 
 app.get('/getAllOwnedEvents', function(req, res) {
@@ -139,15 +292,28 @@ app.get('/createNewEvent', function(req, res) {
 });
 
 app.get('/getEventsByDate', function(req, res) {
-  var userID = req.body.participantID;
-  var startDate = req.body.startDate;
-  var endDate = req.body.endDate;
+  var startDate = req.query.startDate;
+  var endDate = req.query.endDate;
 
-  console.log(userID);
+  queryString = "SELECT * from events where start_time < " + endDate + " and start_time > " + startDate;
+
+  console.log(queryString);
+
+  var query = client.query(queryString,
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else if (result.rows.length > 0) {
+        console.log(result.rows);
+        res.status(200).send(result.rows);
+      } else {
+        res.send("ERROR: No events in date range");
+      }
+    }
+  );
+
   console.log(startDate);
   console.log(endDate);
-
-  res.send("Dates");
 });
 
 app.get('/getMySignUps', function(req, res) {
@@ -155,7 +321,7 @@ app.get('/getMySignUps', function(req, res) {
   console.log(userID);
 
 
-  query = 'select ' +
+  queryString = 'select ' +
     'shift.shift_id, ' +
     'shift.user_id as shift_user_id, ' +
     'shift.approval_status_id, ' +
@@ -190,7 +356,7 @@ app.get('/getMySignUps', function(req, res) {
   console.log(query);
 
   console.log(userID);
-  var query = client.query(query,
+  var query = client.query(queryString,
     function(err, result) {
       if (err) {
         res.send(err);
@@ -202,8 +368,27 @@ app.get('/getMySignUps', function(req, res) {
       }
     }
   );
-
 });
+
+
+app.get('/getEventDetails', function(req, res) {
+  var eventId = req.query.eventID;
+  var queryString = 'SELECT * from events where event_id=' + eventId;
+  console.log(queryString);
+  var query = client.query(queryString,
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else if (result.rows.length > 0) {
+        console.log(result.rows);
+        res.status(200).send(result.rows);
+      } else {
+        res.send("ERROR: Event ID Does not Exist");
+      }
+    }
+  );
+});
+
 
 // insert into users (user_type_id, user_name, user_email) values ($1, $2, $2)
 
@@ -238,14 +423,6 @@ app.get('/participantEvents', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/participantEvents.html'));
 });
 
-app.get('/getEventDetails', function(req, res) {
-  eventID = req.query.eventID;
-  console.log(eventID);
-  // TODO get event
-  res.send("HELLOOOOOOO");
-});
-
-
 app.use('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/views/homePage/home.html'));
 });
@@ -265,8 +442,8 @@ var dayOfWeekEnum = new Enum(['sunday', 'monday', 'tuesday', 'wednesday', 'thurs
 // reccurence passed is enum
 function createEvent(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, capacity, startTime, endTime) {
   // save event
-  newEvent = Event(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, -1)
-    // put event in DB, getEventID
+  newEvent = Event(eventName, eventDescription, eventOwnerID, recurrence, startDate, recurrenceEndDate, -1);
+  // put event in DB, getEventID
 
   datesList = [];
 
@@ -329,33 +506,6 @@ function getDateForNextMonth(date) {
 
 function getDateForNextWeek(date) {
   // TODO
-}
-
-function signUpForTime(userID, eventID, startTime, endTime, date) {
-  for (i = 0; i < endTime; i += (30 * 60 * 1000)) {
-    // get time slot with eventID, startTime = i, endTime = i+30*60*1000, date = date
-    // TODO
-    shiftsForSlot = getShiftsForTimeslot(timeslot);
-    timeslotNum = 0;
-    for (i = 0; i < shiftsForSlot.length; i++) {
-      if (!(approvalEnum.approved.is(shiftsForSlot[i].approveStatus))) {
-        timeslotNum += 1;
-      }
-    }
-
-    if (timeslot.capacity > timeslotNum) {
-      // allow signup
-      // TODO: Do we want to create the new shifts here, or make sure they can sign up for all of the requested shifts - if make sure, move after loop
-    } else {
-      // error
-      // TODO
-    }
-  }
-
-  for (i = 0; i < endTime; i += (30 * 60 * 1000)) {
-    // get time slot with eventID, startTime = i, endTime = i+30*60*1000, date = date
-    // create shift with userID, timeslot ID, approved=false
-  }
 }
 
 function getShiftsForTimeslot(timeslotID) {
