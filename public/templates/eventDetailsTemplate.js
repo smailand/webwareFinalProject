@@ -122,10 +122,10 @@ var userShiftsTableTemplate = _.template(
 );
 
 var userShiftsTemplate = _.template(
-  '<tr id="signup<%= signupId %>">' +
-  '<td><%= eventStart %></td>' +
-  '<td><%= eventEnd %></td>' +
-  '<td><%= approvalStatus %></td>' +
+  '<tr id="signup<%= shift_id %>">' +
+  '<td><%= start_time %></td>' +
+  '<td><%= end_time %></td>' +
+  '<td><%= approval_status %></td>' +
   '<td><button class="btn btn-danger btn-xs" type="button" onclick=removeSignup(event)>Remove Signup</button></td>' +
   '</tr>'
 );

@@ -78,34 +78,34 @@ function getAllShiftData(){
     });
 }
 
-function updateAndDisplaySignups() {
-    handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText) {
-        timeslots = responseText;
-        handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText2) {
-
-            console.log(timeslots[0])
-            console.log(responseText);
-            shiftsList = [];
-            removeSignupsFromList
-            showShiftsTable(shiftsList);
-            showSignupsPanel();
-
-        });
-    });
-}
-
 function showButtonsForUser(typeOfUser) {
-    optionButtons = document.getElementById('optionButtons');
-    if (typeOfUser === 'creator') {
-        optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Edit Event</button>';
-        optionButtons.innerHTML += '<button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>'
-        detailsPanel = document.getElementById("details");
-        detailsPanel.hidden = false;
-    }
-    // else {
-    //   optionButtons.innerHTML = '<button type="button" class="btn btn-primary" onclick="showSignupsPanel()">Sign Up</button>';
-    // }
+  optionButtons = document.getElementById('optionButtons');
+  if (typeOfUser === 'creator') {
+    //optionButtons.innerHTML = '<button type="button" class="btn btn-primary">Edit Event</button>';
+    optionButtons.innerHTML += '<button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>'
+    detailsPanel = document.getElementById("details");
+    detailsPanel.hidden = false;
+  }
+  // else {
+  //   optionButtons.innerHTML = '<button type="button" class="btn btn-primary" onclick="showSignupsPanel()">Sign Up</button>';
+  // }
 }
+
+function updateAndDisplaySignups() {
+  handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText) {
+    timeslots = responseText;
+    handleXMLHTTPGet('/getMySignUpsByEventId', 'eventID=' + eventID + '&userID=' + sessionStorage.getItem('participantID'), function(responseText2) {
+      console.log(responseText2);
+      shiftsList = responseText2;
+      removeDeniedSignups(shiftsList);
+      removeSignupsFromList(shiftsList, timeslots);
+      showShiftsTable(shiftsList);
+      showSignupsPanel();
+
+    });
+  });
+}
+
 
 function showShiftsTable(shiftsList) {
     if (shiftsList.length !== 0) {
@@ -169,33 +169,27 @@ function Signup(eventID, shiftID, eventName, eventStart, eventEnd, approvalStatu
 }
 
 function removeSignup(e) {
-    removeBtn = e.target;
-    parent = removeBtn.parentElement;
-    rowID = e.target.parentElement.parentElement.id;
-    signupID = rowID.slice(6);
-    signupFromList = getSignupFromListById(shiftsList, signupID);
-    if (signupFromList !== null) {
-        if (showRemoveAlert(signupFromList)) {
-            shiftsToRemove = parseRowId(rowID);
-            // remove shifts
-            shiftIDs.forEach(function(p, i) {
-                var deleteID = {
-                    userDeleteID: sessionStorage.getItem('participantID'),
-                    deleteShiftId: p
-                }
-                handleXMLHTTPPost('/cancelSignUp', deleteID, function(responseText) {
-                    console.log(responseText);
-                });
-                // also remove from signups list TODO
-                removeSignupFromList(shiftsList, signupID);
-                // maybe replace with another list
-                showShiftsTable(shiftsList);
-            })
-        }
-    } else {
-        // display error message telling user to refresh page
-        // TODO
+
+  console.log('remvoe signup')
+  removeBtn = e.target;
+  parent = removeBtn.parentElement;
+  rowID = e.target.parentElement.parentElement.id;
+
+  console.log(rowID)
+  signupID = rowID.slice(6);
+  console.log(signupID)
+  if (showRemoveAlert()) {
+    //shiftIDs.forEach(function(p, i) {
+    var deleteID = {
+      userID: sessionStorage.getItem('participantID'),
+      shiftID: signupID
     }
+    handleXMLHTTPPost('/cancelSignUp', deleteID, function(responseText) {
+      console.log(responseText);
+      updateAndDisplaySignups()
+    });
+    //})
+  }
 }
 
 function parseRowId(rowID) {
@@ -209,8 +203,9 @@ function parseRowId(rowID) {
     return shiftIDs;
 }
 
-function showRemoveAlert(signup) {
-    return window.confirm('Are you sure you want to unsign up for ' + signup.eventName + ' occuring from ' + signup.eventStart + ' to ' + signup.eventEnd + '?');
+
+function showRemoveAlert() {
+  return window.confirm('Are you sure you want to remove this signup?');
 }
 
 function getSignupFromListById(checkList, signupId) {
@@ -363,16 +358,21 @@ function showSignupsPanel() {
 
 
 function signUpForSlot(e) {
-    timeslotID = e.target.parentElement.parentElement.id;
-    var slot = {
-        timeSlotId: timeslotID,
-        eventId: eventID,
-        userId: sessionStorage.getItem('participantID')
-    }
 
-    handleXMLHTTPPost('/signUpForShift', slot, function(responseText) {
-        console.log(responseText);
-    });
+
+  timeslotID = e.target.parentElement.parentElement.parentElement.id;
+  console.log(timeslotID)
+  var slot = {
+    timeSlotId: timeslotID,
+    eventId: eventID,
+    userId: sessionStorage.getItem('participantID')
+  }
+
+  handleXMLHTTPPost('/signUpForShift', slot, function(responseText) {
+    console.log(responseText);
+    updateAndDisplaySignups()
+
+  });
 
 }
 
@@ -384,6 +384,7 @@ function Timeslot(eventID, timeslotID, slotStart, slotEnd) {
 }
 
 function removeSignupsFromList(signuplist, timeslotlist) {
+
     for (i = 0; i < signuplist.length; i++) {
         removeSlot = false;
         removeIndex = -1;
@@ -396,4 +397,17 @@ function removeSignupsFromList(signuplist, timeslotlist) {
         }
         timeslotlist.splice(j, 1);
     }
+}
+
+function removeDeniedSignups(signuplist) {
+  deniedIndices = [];
+  for (i = 0; i < signuplist.length; i++) {
+    if (signuplist[i].approval_status === 'denied') {
+      deniedIndices.unshift(i);
+    }
+  }
+
+  for (j = 0; j < deniedIndices.length; j++) {
+    signuplist.splice(deniedIndices[j], 1);
+  }
 }
