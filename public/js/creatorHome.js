@@ -7,20 +7,33 @@ function fetchDataForPage() {
   // get user signups
   userID = sessionStorage.getItem('creatorID');
 
-  handleXMLHTTPGet('/getMySignUps', 'userID=' + userID, function(responseText) {
-    console.log(responseText);
+  handleXMLHTTPGet('/getAllOwnedEvents', 'ownerID=' + userID, function(response) {
+    console.log(response);
 
     // TODO actually put data here
     upcomingEvents = [];
     pendingSignups = [];
 
-    upcomingEvents.push(new EventDetails('abc', 'NewVEthjw', 'wehfwegfhoiugih3ewjripuaogfyhjuoi', 'asdf', 'jkl;', '8', 0, 'MANDI', 'mandi@com.email', new Date()));
-    pendingSignups.push(new PendingSignup('abc', '12', 'NewVEthjw', 'ahdsoji', 'qhire', 'MANDI', 'still mandi', new Date()));
+    for(i=0; i<response.length; i++){
+        event = response[0];
+        upcomingEvents.push(new EventDetails(event.event_id, event.event_name, event.event_description, event.start_time, event.end_time, "10", event.recurrence_event_id, event.user_name, event.user_email, new Date(event.start_time)));
+    }
+
 
 
     showUpcomingEventsTable(upcomingEvents);
     showPendingSignupsTable(pendingSignups);
+  });
+  handleXMLHTTPGet('/getPendingShiftSignUps', 'userId=' + userID, function(response) {
+    console.log(response);
 
+    // TODO actually put data here
+    pendingSignups = [];
+    for(i=0; i<response.length; i++){
+        shift = response[0];
+        pendingSignups.push(new PendingSignup(shift.event_id, shift.shift_id, shift.event_name, shift.start_time, shift.end_time, shift.user_name, shift.user_email, new Date(shift.date)));
+    }
+    showPendingSignupsTable(pendingSignups);
   });
 }
 

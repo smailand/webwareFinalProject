@@ -385,6 +385,7 @@ app.get('/getTimeSlotByEventId', function(req, res) {
 });
 
 
+
 app.get('/getPendingShiftSignUps', function(req, res) {
     var userId = req.query.userId;
     var queryString = "select "+
@@ -395,7 +396,8 @@ app.get('/getPendingShiftSignUps', function(req, res) {
     "time_slot.start_time, "+
     "time_slot.end_time, "+
     "events.event_name, "+
-    "events.event_description "+
+    "events.event_description, "+
+    "events.start_time as date "+
     "from shift "+
     "left outer join users "+
     "on(shift.user_id=users.user_id) "+
