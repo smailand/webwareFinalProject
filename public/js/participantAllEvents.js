@@ -43,7 +43,7 @@ function showEventDetailPage(e) {
     // uhhhhh ..... TODO
   }
 
-  eventID = rowID.slice(5);
+  eventID = rowID.split(':')[1];
   window.location = '/participantEventDetails?eventID='+eventID;
 }
 

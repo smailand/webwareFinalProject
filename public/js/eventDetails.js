@@ -18,6 +18,7 @@ function fetchDataForPage() {
   participID = sessionStorage.getItem('participantID');
   creatorID = sessionStorage.getItem('creatorID');
 
+
   if (participID === null) {
     if (creatorID !== null) {
       userType = 'creator';
@@ -36,12 +37,14 @@ function fetchDataForPage() {
 
   handleXMLHTTPGet('/getEventDetails', 'eventID=' + eventID, function(responseText) {
     console.log(responseText);
+    responseText = responseText[0]
+    console.log(responseText.event_id)
 
     // TODO parse event details
     date = new Date();
     startTime = date.toISOString().substring(11, 19);
     endTime = date.toISOString().substring(11, 19);
-    serviceEvent = new EventDetails(eventID, 'a', 'b', startTime, endTime, 'f', 'g', 'h', 'i', new Date());
+    serviceEvent = new EventDetails(responseText.event_id, responseText.event_name, responseText.event_description, responseText.start_time.substring(11, 19), responseText.end_time.substring(11, 19), 'f', 'g', 'h', 'i', responseText.start_time.substring(0, 10));
 
     displayEvent(serviceEvent);
   });
@@ -55,16 +58,24 @@ function fetchDataForPage() {
 
     showCreatorSignupsTable(creatorShiftsList);
   } else {
-    // check to see if user is signed up for this event
-    // SAM TODO -- need new get... UserID and eventID, returns shift info
-    shiftsList = [];
-
-    signup1 = new Signup('a', 'b_D_7', 'c', 'd', 'e', 'approved', 'f', 'g');
-    shiftsList.push(signup1);
-    shiftsList.push(new Signup('q', 'r', 's', 't', 'u', 'pending', 'l', 'g'));
-    showShiftsTable(shiftsList);
-    showSignupsPanel();
+    updateAndDisplaySignups();
   }
+}
+
+function updateAndDisplaySignups() {
+  handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText) {
+    timeslots = responseText;
+    handleXMLHTTPGet('/getTimeSlotByEventId', 'eventID=' + eventID, function(responseText2) {
+
+        console.log(timeslots[0])
+        console.log(responseText);
+        shiftsList = [];
+        removeSignupsFromList
+        showShiftsTable(shiftsList);
+        showSignupsPanel();
+      )
+    };
+  });
 }
 
 function showButtonsForUser(typeOfUser) {
@@ -114,7 +125,6 @@ function displayEvent(serviceEvent) {
   eventHeading = document.getElementById('eventHeading');
   eventHeading.innerHTML = serviceEvent.eventName;
   eventPanel = document.getElementById('eventPanel');
-  console.log(serviceEvent.eventDate.toISOString().substring(0, 10));
   eventPanel.innerHTML = eventDetailsTemplate(serviceEvent) + eventPanel.innerHTML;
 }
 
@@ -123,7 +133,7 @@ function EventDetails(eventID, eventName, eventDescription, eventStart, eventEnd
   this.eventName = eventName;
   this.eventDescription = eventDescription;
   this.eventStart = eventStart;
-  this.eventEnd = eventStart;
+  this.eventEnd = eventEnd;
   this.eventCapacity = eventCapacity;
   this.recurrenceEventID = recurrenceEventID;
   this.organizerName = organizerName;
@@ -322,7 +332,6 @@ function showSignupsPanel() {
 
   slotsTableBody = document.getElementById('timeslotsTable');
   tableDataHTML = "";
-  timeslots.push(new Timeslot(eventID, 19, "00:30:00", "01:00:00"));
   timeslots.forEach(function(p, i) {
     tableDataHTML += timeslotTemplate(p);
   });
@@ -355,4 +364,19 @@ function Timeslot(eventID, timeslotID, slotStart, slotEnd) {
   this.timeslotID = timeslotID;
   this.slotStart = slotStart;
   this.slotEnd = slotEnd;
+}
+
+function removeSignupsFromList(signuplist, timeslotlist) {
+  for (i = 0; i < signuplist.length; i++) {
+    removeSlot = false;
+    removeIndex = -1;
+    for (j = 0; j < timeslotlist.legnth; j++) {
+      if (signuplist[i].time_slot_id === timeslotlist[j].time_slot_id) {
+        removeSlot = true;
+        removeIndex = j;
+        break;
+      }
+    }
+    timeslotlist.splice(j, 1);
+  }
 }

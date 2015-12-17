@@ -58,17 +58,17 @@ var eventDetailsTemplate = _.template(
   '<div class="row">' + '<div class="form-group col-md-6">' +
   '<label for="eventDateBox" class="control-label">Event Date</label>' +
   '<div>' +
-  '<input type="date" class="form-control"  readonly id="eventDateBox" value=<%= eventDate.toISOString().substring(0, 10) %>>' +
+  '<input type="date" class="form-control"  readonly id="eventDateBox" value=<%= eventDate %>>' +
   '</input>' +
   '</div>' +
   '</div>' +
-  '<div class="form-group col-md-6">' +
-  '<label for="eventCapacityBox" class="control-label">Capacity</label>' +
-  '<div>' +
-  '<input type="text" class="form-control"  readonly id="eventCapacityBox" value="<%= eventCapacity %> volunteers">' +
-  '</input>' +
-  '</div>' +
-  '</div>' +
+  // '<div class="form-group col-md-6">' +
+  // '<label for="eventCapacityBox" class="control-label">Capacity</label>' +
+  // '<div>' +
+  // '<input type="text" class="form-control"  readonly id="eventCapacityBox" value="<%= eventCapacity %> volunteers">' +
+  // '</input>' +
+  // '</div>' +
+  // '</div>' +
   '</div>' +
   '<div class="row">' +
   '<div class="form-group col-md-6">' +
@@ -87,13 +87,7 @@ var eventDetailsTemplate = _.template(
   '</div>' +
   '</div>' +
   '</div>' +
-  '<div class="row">' +
-  '<div class="form-group col-md-12">' +
-  '<label for="organizerNameBox" class="control-label">Organizer</label>' +
-  '<div>' +
-  '<input type="text" class="form-control"  readonly id="organizerNameBox" value="<%= organizerName %>">' +
-  '</input>' +
-  '</div>' +
+
   '</div>' +
   '</form>'
   // '<p>Event Name</p>' +
@@ -185,9 +179,9 @@ var timeslotTableTemplate = _.template(
 );
 
 var timeslotTemplate = _.template(
-  '<tr id="<%= timeslotID %>" >' +
-  '<td><%= slotStart %></td>' +
-  '<td><%= slotEnd %></td>' +
+  '<tr id="<%= time_slot_id %>" >' +
+  '<td><%= start_time %></td>' +
+  '<td><%= end_time %></td>' +
   '<td><div class="btn-group"><button class="btn btn-primary btn-xs" type="button" onclick=signUpForSlot(event)>Sign up</button>' +
   '</div></td>' +
   '</tr>'
