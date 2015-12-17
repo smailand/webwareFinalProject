@@ -45,13 +45,11 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li><a href="/participantHome">Home <span class="sr-only">(current)</span></a></li>
-          <li><a href="#">Search</a></li>
           <li  class='active'><a href="/participantEvents">All Events</a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">My Account</a></li>
-          <li><a onclick="logout()">Logout</a></li>
+          <li><a onclick="logout()" id="pointerMouse">Logout</a></li>
         </ul>
       </div>
     </div>
@@ -59,7 +57,7 @@
   <div class='container'>
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Your Events</div>
+      <div class="panel-heading">All Events</div>
       <div class="panel-body" >
         <div id="eventsPanelBody">
         </div>
@@ -69,12 +67,12 @@
       </div>
 
 
-      <nav id="allEventsPager">
+      <!-- <nav id="allEventsPager">
         <ul class="pager">
           <li class="previous" onclick="prevPage(event)"><a href=""><span aria-hidden="true">&larr;</span> Previous Week</a></li>
           <li class="next" onclick="nextPage(event)"><a href="">Next Week <span aria-hidden="true">&rarr;</span></a></li>
         </ul>
-      </nav>
+      </nav> -->
     </div>
   </div>
 </body>

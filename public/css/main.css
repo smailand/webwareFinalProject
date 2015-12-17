@@ -26,3 +26,8 @@
 .floatRight {
   float: right;
 }
+
+
+#pointerMouse: {
+    cursor: pointer; cursor: hand;
+}
