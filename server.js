@@ -106,82 +106,7 @@ app.post('/cancelSignUp', function(req, res) {
   );
 });
 
-app.post('/createEvent', function(req, res) {
-  var eventName = req.body.eventName;
-  var eventOwnerId = req.body.eventOwnerId;
-  var eventDescription = req.body.eventDescription;
-  var startTime = req.body.startTime;
-  var endTime = req.body.endTime;
-  var recurrenceStartDate = req.body.recurrenceStartDate;
-  var recurrenceEndDate = req.body.recurrenceEndDate;
-  var recurrenceTypeId = req.body.recurrenceTypeId;
 
-  var queryString = ""
-
-
-  if (recurrenceTypeId != RECUR_NONE) {
-    var queryRecurString = "insert into recurrence_event (recurrence_type_id, recurrence_start_date, recurrence_end_date)" +
-      " values (" + recurrenceTypeId + ", \'" + recurrenceStartDate + "\', \'" + recurrenceEndDate + "\'); " +
-      "SELECT currval(pg_get_serial_sequence('recurrence_event','recurrence_event_id'));";
-
-    var query = client.query(queryRecurString,
-      function(err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          recurrenceId = result.rows[0].currval;
-          console.log(recurrenceId);
-
-          queryString2 = "insert into events (event_name, event_owner_id, event_description, recurrence_event_id, start_time, end_time)" +
-            'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' + recurrenceId + ', ' +
-            '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
-            '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
-
-          var query2 = client.query(queryString2,
-            function(err, result) {
-              if (err) {
-                res.send(err);
-              } else {
-                res.sendStatus(200);
-              }
-            }
-          );
-        }
-      }
-    );
-  } else {
-    queryString = "insert into events (event_name, event_owner_id, event_description, start_time, end_time)" +
-      'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' +
-      '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
-      '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
-
-    var query2 = client.query(queryString,
-      function(err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          res.sendStatus(200);
-        }
-      }
-    );
-  }
-
-  console.log(queryString);
-
-
-
-
-  //
-  // var query = client.query(queryString,
-  //     function(err, result) {
-  //         if (err) {
-  //             res.send(err);
-  //         } else {
-  //             res.sendStatus(200);
-  //         }
-  //     }
-  // );
-});
 
 app.post('/approveSignUp', function(req, res) {
   var shiftID = req.body.shiftId;
@@ -493,126 +418,6 @@ function TimeSlot(capacity, eventID, startTime, endTime, date) {
   this.date = date;
 }
 
-// returns -1 for date1 before date2
-// returns 0 for date1 = date2
-// returns 1 for date1 after date2
-function dateBefore(date1, date2) {
-  // TODO
-}
-
-function getDateForNextMonth(date) {
-  // TODO
-}
-
-function getDateForNextWeek(date) {
-  // TODO
-}
-
-function getShiftsForTimeslot(timeslotID) {
-  // TODO
-}
-
-function getShiftsWithEventIDAndUserID(userID, eventID, startTimeRange, endTimeRange) {
-  // get all shifts for a user
-  shifts = [];
-  validShifts = [];
-  for (i = 0; i < shifts; i++) {
-    // get timeslot of shift
-    timeslot = ""; // TODO
-    if (timeslot.eventID === eventID) {
-      keepShift = true;
-      if (startTimeRange != -1) {
-        keepShift = keepShift && (dateBefore(startTimeRange, timeslot.date) < 1)
-      }
-      if (endTimeRange != -1) {
-        keepShift = keepShift && (dateBefore(timeslot.date, endTimeRange) < 1)
-      }
-      if (keepShift) {
-        validShifts.push(shifts[i]);
-      }
-    }
-  }
-  return keepShifts;
-}
-
-// creatorID - userID of organzier
-// allowedSignupStatuses - array of allowed signups
-function getSignupsForCreator(creatorID, allowedSignupStatuses) {
-  // TODO get events with event.ownerID = creatorID
-  creatorsEvents = []; // fix TODO
-  returnShfits = []
-  for (i = 0; i < creatorsEvents.length; i++) {
-    // TODO get shifts for eventID
-    shiftsForEvent = []; // TODO
-    for (j = 0; j < shiftsForEvent.length; j++) {
-      // may not work depending on object equality
-      if (allowedSignupStatuses.indexOf(shiftsForEvent[i].approved) != -1) {
-        returnShifts.push(shiftsForEvent[i]);
-      }
-    }
-  }
-  return returnShfits;
-}
-
-// must pass contiguous shifts
-function getStartAndEndForShifts(shiftsList) {
-  minStart = Infinity;
-  maxEnd = -1;
-  for (i = 0; i < shiftsList.length; i++) {
-    timeslotStartTime = -1; // fix TODO get start time of timeslot corresponding to shiftList[i]
-    timeslotEndTime = -1; // get end time of timeslot corresponding to shfit list [i]
-    if (minStart < timeslotStartTime) {
-      minStart = timeslotStartTime;
-    }
-    if (timeslotEndTime > maxStart) {
-      maxEnd = timeslotEndTime;
-    }
-  }
-
-  return [minStart, maxEnd]
-}
-
-// approve = true for approved, falsse for deny
-function changeSignupStatus(approve, startTime, endTime, eventID, userID) {
-  // get all timeslots for event
-  // get all shifts for given timeslots
-  // edit approved field for all
-}
-
-function deleteUser(userID) {
-  // get user type
-  if (userType === 'organizer') {
-    // get all events with organizer in as creatorID
-    eventsByCreator = []
-      // get all timeslots for those events
-    for (i = 0; i < eventsByCreator.length(); i++) {
-      // get timeslots for eventsByCreator[i]
-      usersInShifts = []; // get all affected users
-
-      timeslots = [];
-      for (j = 0; j < timeslots.length; j++) {
-        // get shifts for timeslots[i]
-        shifts = [];
-        // delete shifts from DB
-      }
-      // notify affected users
-      // delete timeslots from DB
-    }
-    // delete events
-  } else {
-    // get all shifts with userID
-    // notify organizer...?
-    // remove all shifts with userID
-  }
-}
-
-function getSignupsForUser(userID) {
-  // get shifts for user
-  shiftsList = []; // TODO
-
-  return signups;
-}
-
 function Signup(serviceEvent, date, startTime, endTime) {
   this.serviceEvent = serviceEvent;
   this.date = date;
@@ -624,26 +429,6 @@ function Shift(status, timeslotID, userID) {
   this.approveStatus = approveStatus;
   this.timeslotID = timeslotID;
   this.userID = userID;
-}
-
-function getDayOfWeekFromDate(date) {
-  // TODO
-}
-
-// ranges are inclusive
-function getEventsInDateRange(startDate, endDate) {
-  // TODO
-}
-
-
-function clientSideDateToDbDate(dateToConvert) {
-  // convert date
-  return dateToConvert;
-}
-
-function dbDateToClientSideDate(dateToConvert) {
-  // convert date
-  return dateToConvert;
 }
 
 function groupShiftsIntoSignups(listOfShifts) {
@@ -682,6 +467,155 @@ function groupShiftsIntoSignups(listOfShifts) {
   return signups;
 }
 
-function createUser(useremail, userType) {
-  // add to db
+app.post('/createEvent', function(req, res) {
+  var eventName = req.body.eventName;
+  var eventOwnerId = req.body.eventOwnerId;
+  var eventDescription = req.body.eventDescription;
+  var startTime = req.body.startTime;
+  var endTime = req.body.endTime;
+  var recurrenceStartDate = req.body.recurrenceStartDate;
+  var recurrenceEndDate = req.body.recurrenceEndDate;
+  var recurrenceTypeId = req.body.recurrenceTypeId;
+
+  var queryString = ""
+
+
+  if (recurrenceTypeId != RECUR_NONE) {
+    var queryRecurString = "insert into recurrence_event (recurrence_type_id, recurrence_start_date, recurrence_end_date)" +
+      " values (" + recurrenceTypeId + ", \'" + recurrenceStartDate + "\', \'" + recurrenceEndDate + "\'); " +
+      "SELECT currval(pg_get_serial_sequence('recurrence_event','recurrence_event_id'));";
+
+    var query = client.query(queryRecurString,
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          recurrenceId = result.rows[0].currval;
+          console.log(recurrenceId);
+
+          queryString2 = "insert into events (event_name, event_owner_id, event_description, recurrence_event_id, start_time, end_time)" +
+            'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' + recurrenceId + ', ' +
+            '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+            '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+          var query2 = client.query(queryString2,
+            function(err, result) {
+              if (err) {
+                res.send(err);
+              } else {
+                res.sendStatus(200);
+              }
+            }
+          );
+        }
+      }
+    );
+  } else {
+    queryString = "insert into events (event_name, event_owner_id, event_description, start_time, end_time)" +
+      'values (\'' + eventName + '\', ' + eventOwnerId + ', \'' + eventDescription + '\', ' +
+      '\'' + recurrenceStartDate + ' ' + startTime + ' America/New_York\',' +
+      '\'' + recurrenceStartDate + ' ' + endTime + ' America/New_York\' )';
+
+    var query2 = client.query(queryString,
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.sendStatus(200);
+        }
+      }
+    );
+  }
+
+  console.log(queryString);
+});
+
+function makeJsDateFromString(dateString) {
+  fields = dateString.split('-');
+  return new Date(fields[0], fields[1] - 1, fields[2]);
+}
+
+
+function makeStringFromJsDate(jsDate) {
+  return jsDate.toISOString().substring(0, 10);
+}
+
+
+function date2AfterDate1(date1, date2) {
+  if ((date1 - date2) >= 0) {
+    return false;
+  }
+  return true;
+}
+
+function addWeek(jsDate) {
+  copy.setTime(jsDate.getTime());
+  copy.setDate(copy.getDate() + 7);
+  return copy;
+}
+
+function addMonth(jsDate) {
+  copy.setTime(jsDate.getTime());
+  copy.setMonth(copy.getMonth() + 1);
+  return copy;
+}
+
+function getListOfDateStringsForRecurring(startDateString, endDateString, reccurrenceType) {
+  startDate = makeJsDateFromString(startDateString);
+  endDate = makeJsDateFromString(endDateString);
+
+  jsDatesList = [];
+
+  currentDate = startDate;
+
+  while (!(date2AfterDate1(endDate, currentDate))) {
+    jsDatesList.push(currentDate);
+    if (reccurrenceType === RECUR_WEEKLY) {
+      currentDate = addWeek(currentDate)
+    } else if (reccurrenceType === RECUR_MONTHLY) {
+      currentDate = addMonth(currentDate)
+    }
+  }
+
+  dateStringsList = [];
+  for (i = 0; i < jsDatesList.length; i++) {
+    dateStringsList.push(makeStringFromJsDate(jsDatesList[i]));
+  }
+
+  return dateStringsList;
+}
+
+function getNextHalfHour(timeString) {
+  timeStringComps = timeString.split(':');
+  if (timeStringComps[1] === '00') {
+    timeStringComps[1] === '30';
+  } else {
+    hour = parseInt(timeStringComps[0]);
+    hour += 1;
+
+    if (hour === 24) {
+      timeStringComps[0] = '00';
+    } else if (hour < 10) {
+      timeStringComps[0] = '0' + hour.toString();
+    } else {
+      timeStringComps[0] = hour.toString();
+    }
+  }
+
+  return timeStringComps.join(':');
+}
+
+function getListOfTimeslots(startTime, endTime) {
+  currentTime = startTime;
+
+  timepairs = [];
+
+  while(currentTime !== endTime) {
+      nextTime = getNextHalfHour(currentTime);
+      newTimePair = [currentTime, nextTime];
+      timepairs.push(newTimePair);
+      currentTime = nextTime;
+  }
+
+  return timepairs;
 }

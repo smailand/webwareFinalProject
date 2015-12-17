@@ -22,6 +22,22 @@ function recurrenceChanged(e) {
 }
 
 function submit(e) {
+  // check recurrence type
+  recurrence = document.getElementById("recurrenceDropdown");
+  recurrenceVal = parseInt(recurrence.options[recurrence.selectedIndex].value);
+
+  // get date from start date
+  startDate = "";
+
+  if (!date2AfterDate1(new Date(), startDate) {
+    // invalid date
+  }
+
+  if (recurrenceVal > 0) {
+
+  }
+
+
 //
 //   < input type = "text"
 //   name = 'eventName'
