@@ -86,11 +86,19 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/cancelSignUp', function(req, res) {
-  var deleteShiftID = req.body.deleteShiftId;
-  var userID = req.body.userDeleteID;
-  console.log('delete shift with ID' + deleteShiftID + ' for ' + userID);
-  // TODO sam - delete shift with ID
-  res.send("COOL BEANS");
+    var shiftID = req.body.shiftID;
+    var userID = req.body.userID
+    console.log(userEmail);
+    var query = client.query(('delete from shift where shift_id = '+shiftId+' and user+id='+userID),
+                              function(err, result) {
+                                if(err){
+                                    res.send(err);
+                                }
+                                else{
+                                    res.sendStatus(200);
+                                }
+                            }
+    );
 });
 
 app.post('/approveSignUp', function(req, res) {
@@ -142,10 +150,60 @@ app.get('/getEventsByDate', function(req, res) {
 });
 
 app.get('/getMySignUps', function(req, res) {
-  userId = req.query.userID;
-  // TODO Sam - get me events based on id
+    var userID = req.query.userID;
+    console.log(userID);
 
-  res.send("ALL good");
+
+    query ='select '+
+        'shift.shift_id, '+
+        'shift.user_id as shift_user_id, '+
+        'shift.approval_status_id, '+
+        'eventAndSlot.time_slot_id, '+
+        'eventAndSlot.capacity, '+
+        'eventAndSlot.event_id, '+
+        'eventAndSlot.start_time, '+
+        'eventAndSlot.end_time, '+
+        'eventAndSlot.event_name, '+
+        'eventAndSlot.event_description, '+
+        'eventAndSlot.event_owner_id '+
+        'from shift '+
+        'LEFT OUTER join '+
+            '(select '+
+                'time_slot.time_slot_id, '+
+                'time_slot.capacity, '+
+                'time_slot.event_id, '+
+                'time_slot.start_time, '+
+                'time_slot.end_time, '+
+                'events.event_name, '+
+                'events.event_description, '+
+                'events.event_owner_id '+
+                'from time_slot '+
+                'LEFT OUTER JOIN events '+
+                'on (time_slot.event_id = events.event_id) '+
+            ') as eventAndSlot '+
+
+        'on (shift.time_slot_id = eventAndSlot.time_slot_id) '+
+
+        'where user_id = ' + userID;
+
+        console.log(query);
+
+    console.log(userID);
+    var query = client.query(query,
+                              function(err, result) {
+                                if(err){
+                                    res.send(err);
+                                }
+                                else if(result.rows.length > 0){
+                                    console.log(result.rows);
+                                    res.status(200).send(result.rows);
+                                }
+                                else{
+                                    res.send("ERROR: Email Not on File");
+                                }
+                            }
+    );
+
 });
 
 // insert into users (user_type_id, user_name, user_email) values ($1, $2, $2)
