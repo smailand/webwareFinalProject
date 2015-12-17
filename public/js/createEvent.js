@@ -14,7 +14,7 @@ function fetchDataForPage() {
   form = document.getElementById('newEventForm');
   form.addEventListener('submit', function(event) {
     console.log('submitting');
-    checkCreateEvent());
+    checkCreateEvent();
     event.preventDefault();
   });
 
@@ -55,7 +55,7 @@ function checkCreateEvent() {
   if (!date2AfterDate1(new Date(), startDate)) {
     errorMsgPane.innerHTML = "Start date must occur after the current date."
     errorMsgPane.hidden = false;
-    return false;
+    return;
   }
 
   if (recurrenceVal > 0) {
@@ -65,7 +65,7 @@ function checkCreateEvent() {
       errorMsgPane.innerHTML = "Reccurrence end date must occur after the event start date."
       errorMsgPane.hidden = false;
 
-      return false;
+      return;
     }
   }
 
@@ -93,10 +93,42 @@ function checkCreateEvent() {
   if (!date2AfterDate1(startingTime, endingTime)) {
     errorMsgPane.innerHTML = "Start time must occur before the end time."
     errorMsgPane.hidden = false;
-    return false;
+    return;
+  }
+  eventNameBox = document.getElementById('eventNameBox');
+  eventName = eventNameBox.value;
+  console.log(eventName);
+  eventDetailsBox = document.getElementById('eventDetailsBox');
+  eventDescription = eventDetailsBox.value;
+  console.log(eventDescription);
+
+  eventStartDate = startDate.toISOString().substring(0, 10);
+  eventRecurrenceType = recurrenceVal;
+  if (eventRecurrenceType === 0) {
+    eventEndDate = eventStartDate;
+  } else {
+    eventEndDate = endDate.toISOString().substring(0, 10);
   }
 
-  return true;
+  eventOwner = sessionStorage.getItem('creatorID');
+
+  capacityBox = document.getElementById('capacityBox');
+  eventCapacity = capacityBox.value;
+  console.log(eventCapacity);
+
+  eventStartTime = startingTime.toISOString().substring(11, 19);
+  eventEndTime = endingTime.toISOString().substring(11, 19);
+
+  newEvent = new BrandNewEvent(eventName, eventDescription, eventStartTime, eventEndTime, eventRecurrenceType, eventStartDate, eventEndDate, eventCapacity, eventOwner);
+
+  handleXMLHTTPPost('/createEvent', newEvent, function(responseText) {
+    console.log(responseText);
+    if (responseText === 'OK') {
+      window.location = '/creatorHome';
+    }
+  });
+
+
 }
 
 function date2AfterDate1(date1, date2) {
@@ -119,4 +151,16 @@ function makeTimeStringFromHourMinuteAMPM(hourString, minuteString, AMPMString) 
   }
 
   return hourString + ':' + minuteString + ':00'
+}
+
+function BrandNewEvent(eventName, eventDescription, eventStartTime, eventEndTime, eventRecurrenceType, eventStartDate, eventEndDate, eventCapacity, eventOwner) {
+  this.eventName = eventName;
+  this.eventOwnerId = eventOwner;
+  this.eventDescription = eventDescription;
+  this.startTime = eventStartTime;
+  this.endTime = eventEndTime;
+  this.recurrenceStartDate = eventStartDate;
+  this.recurrenceEndDate = eventEndDate;
+  this.recurrenceTypeId = eventRecurrenceType;
+  this.capacity = eventCapacity;
 }
