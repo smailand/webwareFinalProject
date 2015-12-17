@@ -55,7 +55,7 @@ var eventDetailsTemplate = _.template(
   '</div>' +
   '</div>' +
   '</div>' +
-  '<div class="row">' +'<div class="form-group col-md-6">' +
+  '<div class="row">' + '<div class="form-group col-md-6">' +
   '<label for="eventDateBox" class="control-label">Event Date</label>' +
   '<div>' +
   '<input type="date" class="form-control"  readonly id="eventDateBox" value=<%= eventDate.toISOString().substring(0, 10) %>>' +
@@ -171,3 +171,104 @@ var creatorShiftsTableTemplate = _.template(
   '<tbody id="creatorShiftsTable">' +
   '</tbody>'
 );
+
+var timeslotTableTemplate = _.template(
+  '<thead>' +
+  '<tr>' +
+  '<th>Shift Start</th>' +
+  '<th>Shift End</th>' +
+  '<th>Signup</th>' +
+  '</tr>' +
+  '</thead>' +
+  '<tbody id="timeslotsTable">' +
+  '</tbody>'
+);
+
+var timeslotTemplate = _.template(
+  '<tr id="<%= timeslotID %>" >' +
+  '<td><%= slotStart %></td>' +
+  '<td><%= slotEnd %></td>' +
+  '<td><div class="btn-group"><button class="btn btn-primary btn-xs" type="button" onclick=signUpForSlot(event)>Sign up</button>' +
+  '</div></td>' +
+  '</tr>'
+);
+
+// var timeSelectTemplate = _.template(
+//   '<div class="row">' +
+//   '<div class="form-group col-sm-6">' +
+//   '<label for="eventStartHour" class="control-label">Event Start Time</label>' +
+//   '<div class="input-group">' +
+//   '<span class="input-group-btn">' +
+//   '<select id="eventStartHour" name="eventStartHour" class="form-control">' +
+//   '<option>12</option>' +
+//   '<option>01</option>' +
+//   '<option>02</option>' +
+//   '<option>03</option>' +
+//   '<option>04</option>' +
+//   '<option>05</option>' +
+//   '<option>06</option>' +
+//   '<option>07</option>' +
+//   '<option>08</option>' +
+//   '<option>09</option>' +
+//   '<option>10</option>' +
+//   '<option>11</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '<span class="input-group-btn">' +
+//   '<select id="eventStartMinute" name="eventStartMinute" class="form-control">' +
+//   '<option>00</option>' +
+//   '<option>30</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '<span class="input-group-btn">' +
+//
+//   '<select id="eventStartAMPM" name="eventStartAMPM" class="form-control">' +
+//   '<option>AM</option>' +
+//   '<option>PM</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '</div>' +
+//   '</div>' +
+//   '<div class="form-group col-sm-6">' +
+//   '<label for="eventEndHour" class="control-label">Event End Time</label>' +
+//   '<div class="input-group">' +
+//   '<span class="input-group-btn">' +
+//   '<select id="eventEndHour" name="eventEndHour" class="form-control">' +
+//   '<option>12</option>' +
+//   '<option>01</option>' +
+//   '<option>02</option>' +
+//   '<option>03</option>' +
+//   '<option>04</option>' +
+//   '<option>05</option>' +
+//   '<option>06</option>' +
+//   '<option>07</option>' +
+//   '<option>08</option>' +
+//   '<option>09</option>' +
+//   '<option>10</option>' +
+//   '<option>11</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '<span class="input-group-btn">' +
+//   '<select id="eventEndMinute" name="eventEndMinute" class="form-control">' +
+//   '<option>00</option>' +
+//   '<option>30</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '<span class="input-group-btn">' +
+//
+//   '<select id="eventEndAMPM" name="eventEndAMPM" class="form-control">' +
+//   '<option>AM</option>' +
+//   '<option>PM</option>' +
+//   '</select>' +
+//   '</span>' +
+//   '</div>' +
+//   '</div>' +
+//   '</div>' +
+//   '<div class="row">' +
+//   '<div id="createError" class="col-md-12 alert alert-warning" role="alert" hidden></div>' +
+//   '<div class="floatRight">' +
+//   '<button type="button"  onclick="stopSignups()" class="col-md-8 btn btn-default">Discard Event</button>' +
+//   '<button type="button" onclick="finishSignups()" class="col-md-8 smallMargin btn btn-primary">Create Event</button>' +
+//   '</div>' +
+//   '</div>'
+// );
