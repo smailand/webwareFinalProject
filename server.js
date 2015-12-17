@@ -205,6 +205,22 @@ app.post('/editEvent', function(req, res) {
     );
 });
 
+app.get('/getAllEvents', function(req, res) {
+    var ownerID = req.query.ownerID;
+
+    queryString = "SELECT * from events"
+
+    console.log(queryString);
+
+    var query = client.query(queryString, function(err, result) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.status(200).send(result.rows);
+        }
+    });
+});
+
 app.get('/getAllOwnedEvents', function(req, res) {
     var ownerID = req.query.ownerID;
 
@@ -346,6 +362,74 @@ app.get('/getMySignUps', function(req, res) {
     );
 });
 
+app.get('/getMySignUpsByEventId', function(req, res) {
+    var userID = req.query.userID;
+    var eventID = req.query.eventID
+    console.log("USER ID:");
+    console.log(userID);
+
+
+    queryString = 'select ' +
+        'shift.shift_id, ' +
+        'shift.user_id as shift_user_id, ' +
+        'approval_status.approval_status,' +
+        'eventAndSlot.time_slot_id, ' +
+        'eventAndSlot.capacity, ' +
+        'eventAndSlot.event_id, ' +
+        'eventAndSlot.start_time, ' +
+        'eventAndSlot.end_time, ' +
+        'eventAndSlot.event_name, ' +
+        'eventAndSlot.event_description, ' +
+        'eventAndSlot.event_owner_id, ' +
+        'eventAndSlot.start_date, ' +
+        'users.user_email, ' +
+        'users.user_name ' +
+        'from shift ' +
+        'LEFT OUTER join ' +
+        '(select ' +
+        'time_slot.time_slot_id, ' +
+        'time_slot.capacity, ' +
+        'time_slot.event_id, ' +
+        'time_slot.start_time, ' +
+        'time_slot.end_time, ' +
+        'events.event_name, ' +
+        'events.event_description, ' +
+        'events.event_owner_id, ' +
+        'events.start_time as start_date ' +
+        'from time_slot ' +
+        'LEFT OUTER JOIN events ' +
+        'on (time_slot.event_id = events.event_id) ' +
+        ') as eventAndSlot ' +
+
+        'on (shift.time_slot_id = eventAndSlot.time_slot_id) ' +
+
+        'LEFT OUTER JOIN approval_status ' +
+        'on(shift.approval_status_id = approval_status.approval_status_id)' +
+
+        'LEFT OUTER JOIN users ' +
+        'on(eventAndSlot.event_owner_id = users.user_id) ' +
+
+        'where shift.user_id = ' + userID +
+        " and "+
+        "eventAndSlot.event_id = "+ eventID;
+
+    console.log(queryString);
+
+    console.log(userID);
+    var query = client.query(queryString,
+        function(err, result) {
+            if (err) {
+                res.send(err);
+            } else if (result.rows.length > 0) {
+                console.log(result.rows);
+                res.status(200).send(result.rows);
+            } else {
+                res.send("ERROR: Email Not on File");
+            }
+        }
+    );
+});
+
 
 app.get('/getEventDetails', function(req, res) {
     var eventId = req.query.eventID;
@@ -385,6 +469,7 @@ app.get('/getTimeSlotByEventId', function(req, res) {
 });
 
 
+
 app.get('/getPendingShiftSignUps', function(req, res) {
     var userId = req.query.userId;
     var queryString = "select "+
@@ -395,7 +480,8 @@ app.get('/getPendingShiftSignUps', function(req, res) {
     "time_slot.start_time, "+
     "time_slot.end_time, "+
     "events.event_name, "+
-    "events.event_description "+
+    "events.event_description, "+
+    "events.start_time as date "+
     "from shift "+
     "left outer join users "+
     "on(shift.user_id=users.user_id) "+

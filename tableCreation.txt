@@ -172,3 +172,25 @@ select
             'from time_slot'+
             'LEFT OUTER JOIN events'+
             'on (time_slot.event_id = events.event_id)'
+
+
+
+
+select
+shift_id,
+shift.event_id,
+users.user_name,
+users.user_email,
+time_slot.start_time,
+time_slot.end_time,
+events.event_name,
+events.event_description
+from shift
+left outer join users
+on(shift.user_id=users.user_id)
+
+left outer join time_slot
+on(shift.time_slot_id=time_slot.time_slot_id)
+
+left outer join events
+on(shift.event_id=events.event_id)
