@@ -103,18 +103,30 @@ app.post('/cancelSignUp', function(req, res) {
 
 app.post('/approveSignUp', function(req, res) {
   var shiftID = req.body.shiftId;
-  // TODO approve given shift
-
-  res.send("ftuygoip");
+  var query = client.query(("UPDATE shift set approval_status_id="+APPROVED+" where shift_id="+shiftID),
+                            function(err, result) {
+                              if(err){
+                                  res.send(err);
+                              }
+                              else{
+                                  res.sendStatus(200);
+                              }
+                          }
+  );
 });
 
 app.post('/denySignUp', function(req, res) {
-  var userID = req.body.userDeleteID;
-  var deleteEventID = req.body.deleteEventId;
-
-  // TODO delete given shift
-
-  res.send("ftuygoip");
+    var shiftID = req.body.shiftId;
+    var query = client.query(("UPDATE shift set approval_status_id="+DENIED+" where shift_id="+shiftID),
+                              function(err, result) {
+                                if(err){
+                                    res.send(err);
+                                }
+                                else{
+                                    res.sendStatus(200);
+                                }
+                            }
+    );
 });
 
 app.post('/deleteEvent', function(req, res) {
