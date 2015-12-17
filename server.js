@@ -206,13 +206,30 @@ app.post('/editEvent', function(req, res) {
 });
 
 app.get('/getAllOwnedEvents', function(req, res) {
-    var ownerID = req.body.ownerID;
-    var query = client.query('SELECT * from events where event_owner_id=' + ownerID, function(err, result) {
+    var ownerID = req.query.ownerID;
+
+    queryString = "SELECT "+
+    "events.event_id, " +
+    "events.event_name, " +
+    "events.event_owner_id, " +
+    "events.event_description, " +
+    "events.recurrence_event_id, " +
+    "events.start_time, " +
+    "events.end_time, " +
+    "users.user_name, " +
+    "users.user_email " +
+    "from events "+
+    "left outer join users "+
+    "on(events.event_owner_id=users.user_id) "+
+    "where event_owner_id=" + ownerID;
+
+    console.log(queryString);
+
+    var query = client.query(queryString, function(err, result) {
         if (err) {
             res.send(err);
         } else {
-            res.sendStatus(200);
-            console.log(result.rows);
+            res.status(200).send(result.rows);
         }
     });
 });
@@ -266,6 +283,7 @@ app.get('/getEventsByDate', function(req, res) {
 
 app.get('/getMySignUps', function(req, res) {
     var userID = req.query.userID;
+    console.log("USER ID:");
     console.log(userID);
 
 
@@ -311,7 +329,7 @@ app.get('/getMySignUps', function(req, res) {
 
         'where shift.user_id = ' + userID;
 
-    console.log(query);
+    console.log(queryString);
 
     console.log(userID);
     var query = client.query(queryString,
@@ -332,6 +350,66 @@ app.get('/getMySignUps', function(req, res) {
 app.get('/getEventDetails', function(req, res) {
     var eventId = req.query.eventID;
     var queryString = 'SELECT * from events where event_id=' + eventId;
+    console.log(queryString);
+    var query = client.query(queryString,
+        function(err, result) {
+            if (err) {
+                res.send(err);
+            } else if (result.rows.length > 0) {
+                console.log(result.rows);
+                res.status(200).send(result.rows);
+            } else {
+                res.send("ERROR: Event ID Does not Exist");
+            }
+        }
+    );
+});
+
+
+app.get('/getTimeSlotByEventId', function(req, res) {
+    var eventId = req.query.eventID;
+    var queryString = 'SELECT * from time_slot where event_id=' + eventId;
+    console.log(queryString);
+    var query = client.query(queryString,
+        function(err, result) {
+            if (err) {
+                res.send(err);
+            } else if (result.rows.length > 0) {
+                console.log(result.rows);
+                res.status(200).send(result.rows);
+            } else {
+                res.send("ERROR: Event ID Does not Exist");
+            }
+        }
+    );
+});
+
+
+app.get('/getPendingShiftSignUps', function(req, res) {
+    var userId = req.query.userId;
+    var queryString = "select "+
+    "shift_id, "+
+    "shift.event_id, "+
+    "users.user_name, "+
+    "users.user_email, "+
+    "time_slot.start_time, "+
+    "time_slot.end_time, "+
+    "events.event_name, "+
+    "events.event_description "+
+    "from shift "+
+    "left outer join users "+
+    "on(shift.user_id=users.user_id) "+
+
+    "left outer join time_slot "+
+    "on(shift.time_slot_id=time_slot.time_slot_id) "+
+
+    "left outer join events "+
+    "on(shift.event_id=events.event_id) "+
+
+    "where events.event_owner_id= "+userId+
+    "and "+
+    "shift.approval_status_id="+PENDING;
+
     console.log(queryString);
     var query = client.query(queryString,
         function(err, result) {
